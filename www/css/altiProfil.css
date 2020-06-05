@@ -1,0 +1,54 @@
+#mapmenu li.altiProfil #button-altiProfil span.icon{
+  background-image: url(getfile?targetmodule=altiProfil&file=img/noun_altitude.png);
+}
+
+#mapmenu li.altiProfil.active #button-altiProfil span.icon{
+  background-image: url(getfile?targetmodule=altiProfil&file=img/noun_altitude_click.png);
+  background-position: 0 0;
+}
+
+#dock-content .altiProfil h3 .icon{
+    background-image: url(getfile?targetmodule=altiProfil&file=img/noun_altitude.png);
+    background-position: 0 0;
+}
+
+#altiProfil {
+    width: 500px;
+    height: 100%;
+    z-index: 100000;
+    background-color: #EFEFEF;
+    color: #333;
+    overflow: auto;
+    font-size: 0.85em;
+    padding: 5px;
+    max-height: calc(100% - 10px);
+    max-width: calc(100% - 10px);
+}
+
+#dock-content #altiProfil .menu-content #profil-chart .spinner{
+    display: inline-block;
+    width: 80px;
+    height: 80px;
+}
+#dock-content #altiProfil .menu-content #profil-chart .spinner{
+    content: " ";
+    display: block;
+    width: 34px;
+    height: 34px;
+    margin: 8px;
+    border-radius: 50%;
+    border: 6px solid #fff;
+    border-color: #474747 transparent #474747 transparent;
+    animation: lds-dual-ring 1.2s linear infinite;
+  }
+  @keyframes lds-dual-ring {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+}
+
+
+
