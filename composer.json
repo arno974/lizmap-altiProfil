@@ -1,0 +1,24 @@
+{
+    "name": "lizmap/lizmap-altiProfil",
+    "type": "jelix-module",
+    "description": "Jelix module for Lizmap, which adds tools to get a profile graph from a DEM",
+    "keywords": ["module", "jelix", "lizmap", "altitude", "dem", "profile"],
+    "homepage": "http://3liz.com",
+    "license": "MPL-2.0",
+    "authors": [
+        {
+            "name": "Arnaud VANDECASTEELE",
+            "email": "arnaud.sig@gmail.com"
+        }
+    ],
+    "require": {
+    },
+    "minimum-stability": "stable",
+    "extra" : {
+        "jelix" : {
+            "modules": [
+                "altiProfil/"
+            ]
+        }
+    }
+}

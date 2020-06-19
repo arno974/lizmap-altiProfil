@@ -10,9 +10,9 @@ Class GetAltiServicesFromDB{
     **/
     function getModuleConfig(){
         $localConfig = jApp::configPath('localconfig.ini.php');
-        $localConfig = new jIniFileModifier($localConfig);        
+        $localConfig = new jIniFileModifier($localConfig);
         $this->Srid = $localConfig->getValue('srid', 'altiProfil');
-        $this->AltiProfileTable = $localConfig->getValue('altiProfileTable', 'altiProfil');      
+        $this->AltiProfileTable = $localConfig->getValue('altiProfileTable', 'altiProfil');
         $this->Altisource = $localConfig->getValue('altisource', 'altiProfil');
         return $localConfig;
     }
@@ -20,43 +20,43 @@ Class GetAltiServicesFromDB{
     /**
      * Get alti from one point based on database
     **/
-    public function getAlti($lon, $lat){       
-        $queryalti = $this->queryAlti($lon, $lat);        
-        return $queryalti;        
+    public function getAlti($lon, $lat){
+        $queryalti = $this->queryAlti($lon, $lat);
+        return $queryalti;
     }
 
     /**
-     * Alti SQL Query 
+     * Alti SQL Query
     **/
     private function queryAlti($lon, $lat) {
         $this->getModuleConfig();
-        $sql = sprintf("
+        $sql = sprintf('
             SELECT ST_Value(
-                %s.rast, 
-                ST_Transform(ST_SetSRID(ST_MakePoint(%f,%f),4326),%s)
+                %1$s.rast,
+                ST_Transform(ST_SetSRID(ST_MakePoint(%2$f,%3$f),4326),%4$s)
             ) as z
-            FROM %s
+            FROM %1$s
             WHERE ST_Intersects(
-                %s.rast, 
-                ST_Transform(ST_SetSRID(ST_MakePoint(%f,%f),4326),%s)
-                
-        )", $this->AltiProfileTable, 
-            $lon, $lat, $this->Srid, 
-            $this->AltiProfileTable, 
+                %1$s.rast,
+                ST_Transform(ST_SetSRID(ST_MakePoint(%2$f,%3$f),4326),%4$s)
+
+        )',
             $this->AltiProfileTable,
-            $lon, $lat, $this->Srid
+            $lon,
+            $lat,
+            $this->Srid
         );
         $cnx = jDb::getConnection( 'altiProfil' );
         $qResult = $cnx->query( $sql );
-        $result = array("elevations"=>[$qResult->fetch(PDO::FETCH_ASSOC)]);       
+        $result = array("elevations"=>[$qResult->fetch(PDO::FETCH_ASSOC)]);
         return json_encode($result);
     }
 
     /**
-     * Get alti from database based on one point  
+     * Get alti from database based on one point
     **/
-    public function getProfil($p1Lon, $p1Lat, $p2Lon, $p2Lat){        
-        $getProfil =$this->queryProfil($p1Lon, $p1Lat, $p2Lon, $p2Lat);        
+    public function getProfil($p1Lon, $p1Lat, $p2Lon, $p2Lat){
+        $getProfil =$this->queryProfil($p1Lon, $p1Lat, $p2Lon, $p2Lat);
         return $getProfil;
     }
 
@@ -66,29 +66,29 @@ Class GetAltiServicesFromDB{
     protected function queryProfil($p1Lon, $p1Lat, $p2Lon, $p2Lat){
         $this->getModuleConfig();
         //ref: https://blog.mathieu-leplatre.info/drape-lines-on-a-dem-with-postgis.html
-        $sql = sprintf("
-            WITH 
+        $sql = sprintf('
+            WITH
                 line AS(
                     -- From an arbitrary line
-                    SELECT 
+                    SELECT
                         ST_MakeLine(
-                            ST_Transform(ST_SetSRID(ST_MakePoint(%f,%f),4326),%s),
-                            ST_Transform(ST_SetSRID(ST_MakePoint(%f, %f),4326),%s)
+                            ST_Transform(ST_SetSRID(ST_MakePoint(%2$f, %3$f),4326), %4$s),
+                            ST_Transform(ST_SetSRID(ST_MakePoint(%5$f, %6$f),4326), %4$s)
                         )
                     AS geom),
                 linemesure AS(
                 -- Add a mesure dimension to extract steps
-                SELECT 
+                SELECT
                     ST_AddMeasure(line.geom, 0, ST_Length(line.geom)) as linem,
                     generate_series(
-                        0, 
-                        ST_Length(line.geom)::int, 
-                        CASE 
+                        0,
+                        ST_Length(line.geom)::int,
+                        CASE
                             WHEN ST_Length(line.geom)::int < 1000 THEN 5
                             ELSE 20
                         END
                     ) as i,
-                    CASE 
+                    CASE
                         WHEN ST_Length(line.geom)::int < 1000 THEN 5
                         ELSE 20
                     END as resolution
@@ -98,15 +98,15 @@ Class GetAltiServicesFromDB{
                 ),
                 cells AS (
                 -- Get DEM elevation for each
-                    SELECT p.geom AS geom, ST_Value(foncier.reunion_mnt.rast, 1, p.geom) AS val, resolution
-                    FROM %s, points2d p
-                    WHERE ST_Intersects(%s.rast, p.geom)
+                    SELECT p.geom AS geom, ST_Value(%1$s.rast, 1, p.geom) AS val, resolution
+                    FROM %1$s, points2d p
+                    WHERE ST_Intersects(%1$s.rast, p.geom)
                 ),
                 -- Instantiate 3D points
                 points3d AS (
                     SELECT ST_SetSRID(
-                                ST_MakePoint(ST_X(geom), ST_Y(geom), val), 
-                                %s
+                                ST_MakePoint(ST_X(geom), ST_Y(geom), val),
+                                %4$s
                             ) AS geom, resolution FROM cells
                 ),
                 line3D AS(
@@ -118,12 +118,11 @@ Class GetAltiServicesFromDB{
                     FROM line3D
                 )
             -- Build 3D line from 3D points
-            SELECT ST_distance(origin, geom) AS x, ST_Z(geom) as y, ST_X(geom) as lon, ST_Y(geom) as lat, resolution FROM xz",            
-            $p1Lon, $p1Lat, $this->Srid,
-            $p2Lon,$p2Lat, $this->Srid, 
-            $this->AltiProfileTable, 
+            SELECT ST_distance(origin, geom) AS x, ST_Z(geom) as y, ST_X(geom) as lon, ST_Y(geom) as lat, resolution FROM xz',
             $this->AltiProfileTable,
-            $this->Srid
+            $p1Lon, $p1Lat,
+            $this->Srid,
+            $p2Lon, $p2Lat
         );
         $cnx = jDb::getConnection('altiProfil');
         $qResult = $cnx->query($sql);
@@ -138,54 +137,53 @@ Class GetAltiServicesFromDB{
             $resolution = $row->resolution;
         }
         //slope
-        $sql = sprintf(" 
-            WITH 
+        $sql = sprintf('
+            WITH
                 line AS(
                     -- From an arbitrary line
-                    SELECT 
+                    SELECT
                         ST_MakeLine(
-                            ST_Transform(ST_SetSRID(ST_MakePoint(%f,%f),4326),%s),
-                            ST_Transform(ST_SetSRID(ST_MakePoint(%f, %f),4326),%s)
+                            ST_Transform(ST_SetSRID(ST_MakePoint(%2$f, %3$f), 4326), %4$s),
+                            ST_Transform(ST_SetSRID(ST_MakePoint(%5$f, %6$f), 4326), %4$s)
                         )
                     AS geom
                 ), RasterCells AS (
                     -- Get DEM elevation for each
-                    SELECT ST_Clip(%s.rast, line.geom, -9999, TRUE) as rast
-                    FROM %s, line
-                    WHERE ST_Intersects(%s.rast, line.geom)
+                    SELECT ST_Clip(%1$s.rast, line.geom, -9999, TRUE) as rast
+                    FROM %1$s, line
+                    WHERE ST_Intersects(%1$s.rast, line.geom)
                 ), rasterSlopStat AS (
-                    Select (ST_SummaryStatsAgg(ST_Slope(rast, 1, '32BF', 'DEGREES', 1.0), 1, TRUE, 1)).*
+                    Select (ST_SummaryStatsAgg(ST_Slope(rast, 1, \'32BF\', \'DEGREES\', 1.0), 1, TRUE, 1)).*
                     FROM RasterCells
                 )
                 SELECT  (rasterSlopStat).count,
-                        Round((rasterSlopStat).min::numeric, 2) as min_slope, 
+                        Round((rasterSlopStat).min::numeric, 2) as min_slope,
                         Round((rasterSlopStat).max::numeric, 2) as max_slope,
                         Round((rasterSlopStat).mean::numeric, 2) as mean_slope
                         FROM rasterSlopStat
-        
-            ",
-            $p1Lon, $p1Lat, $this->Srid,
-            $p2Lon,$p2Lat, $this->Srid, 
-            $this->AltiProfileTable,             
+
+            ',
             $this->AltiProfileTable,
-            $this->AltiProfileTable
+            $p1Lon, $p1Lat,
+            $this->Srid,
+            $p2Lon, $p2Lat
         );
         $cnx = jDb::getConnection('altiProfil');
-        $qResult = $cnx->query($sql); 
+        $qResult = $cnx->query($sql);
         $slope = json_encode(
                     $qResult->fetch(PDO::FETCH_ASSOC)
-                );  
+                );
         $data = [ [
             "x" => $x,
-            "y" => $y,  
+            "y" => $y,
             "customdata" => $customdata,
             "srid" => $this->Srid,
             "resolution" => $resolution,
             "altisource" => $this->Altisource,
             "slope_degrees" => $slope,
             "source" => 'DB'
-         ] ]; 
-         
+         ] ];
+
         return json_encode($data);
     }
 }

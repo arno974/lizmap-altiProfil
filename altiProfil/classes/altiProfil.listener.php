@@ -7,8 +7,8 @@ class altiProfilListener extends jEventListener{
         $altiProvider = $localConfig->getValue('altiProfileProvider', 'altiProfil');
         return $altiProvider ;
     }
-    
-    function onmapDockable ( $event ) {   
+
+    function onmapDockable ( $event ) {
         if($this->getAltiProviderConfig() == 'database' || $this->getAltiProviderConfig() == 'ign'){
             $tpl = new jTpl();
             $dockable = new lizmapMapDockItem(
@@ -22,10 +22,10 @@ class altiProfilListener extends jEventListener{
         } else {
             $errorConfigMsg = jLocale::get('altiProfil~altiProfil.error.configMsg');
             jLog::log($errorConfigMsg);
-        }  
-    } 
+        }
+    }
 
-    function ongetMapAdditions ($event) { 
+    function ongetMapAdditions ($event) {
         if($this->getAltiProviderConfig() == 'database' || $this->getAltiProviderConfig() == 'ign'){
             $js = array();
             $jscode = array();
@@ -36,8 +36,14 @@ class altiProfilListener extends jEventListener{
             // Add Dataviz if not already available
             if ( !$this->getDatavizStatus($event) ) {
                 $bp = jApp::config()->urlengine['basePath'];
-                $js[] = $bp.'assets/js/dataviz/plotly-latest.min.js';
-                $js[] = $bp.'assets/js/dataviz/dataviz.js';
+                if (file_exists(jApp::wwwPath('js/dataviz/plotly-latest.min.js'))) {
+                    $js[] = $bp.'js/dataviz/plotly-latest.min.js';
+                    $js[] = $bp.'js/dataviz/dataviz.js';
+                }
+                if (file_exists(jApp::wwwPath('assets/js/dataviz/plotly-latest.min.js'))) {
+                    $js[] = $bp.'assets/js/dataviz/plotly-latest.min.js';
+                    $js[] = $bp.'assets/js/dataviz/dataviz.js';
+                }
             }
             $css = array(
                 jUrl::get('jelix~www:getfile', array('targetmodule'=>'altiProfil', 'file'=>'css/altiProfil.css'))
@@ -50,11 +56,11 @@ class altiProfilListener extends jEventListener{
                 )
             );
 
-            
+
         }
     }
     function onmapMiniDockable ($event) { }
-    function onmapRightDockable ($event) { }   
+    function onmapRightDockable ($event) { }
     function onmapBottomDockable ($event) { }
 
     protected function getDatavizStatus ($event) {
