@@ -1,21 +1,45 @@
 <?php
 
-Class GetAltiServicesFromDB{
+Class GetAltiServicesFromDB {
+
     protected $Srid = "";
     protected $AltiProfileTable = "";
     protected $Altisource = "";
+    protected $repository = Null;
+    protected $project = Null;
 
-    /**
-     * Get config parameters
-    **/
-    function getModuleConfig(){
+    function __construct($repository, $project) {
+
+        // Get global config
         $localConfig = jApp::configPath('localconfig.ini.php');
         $localConfig = new jIniFileModifier($localConfig);
         $this->Srid = $localConfig->getValue('srid', 'altiProfil');
         $this->AltiProfileTable = $localConfig->getValue('altiProfileTable', 'altiProfil');
         $this->Altisource = $localConfig->getValue('altisource', 'altiProfil');
-        return $localConfig;
+
+        // Get project config: override table and source per project
+        $this->repository = $repository;
+        $this->project = $project;
+        $p = lizmap::getProject($repository.'~'.$project);
+        if( $p ){
+            $alti_config_file = $p->getQgisPath() . '.alti';
+            if (file_exists($alti_config_file)) {
+                $config = parse_ini_file($alti_config_file, True);
+                if ($config and array_key_exists('altiProfil', $config)) {
+                    if (array_key_exists('srid', $config['altiProfil'])) {
+                        $this->Srid = $config['altiProfil']['srid'];
+                    }
+                    if (array_key_exists('altiProfileTable', $config['altiProfil'])) {
+                        $this->AltiProfileTable = $config['altiProfil']['altiProfileTable'];
+                    }
+                    if (array_key_exists('altisource', $config['altiProfil'])) {
+                        $this->Altisource = $config['altiProfil']['altisource'];
+                    }
+                }
+            }
+        }
     }
+
 
     /**
      * Get alti from one point based on database
@@ -29,7 +53,7 @@ Class GetAltiServicesFromDB{
      * Alti SQL Query
     **/
     private function queryAlti($lon, $lat) {
-        $this->getModuleConfig();
+
         $sql = sprintf('
             SELECT ST_Value(
                 %1$s.rast,
@@ -64,7 +88,7 @@ Class GetAltiServicesFromDB{
      * SQL Query Profil from database
     **/
     protected function queryProfil($p1Lon, $p1Lat, $p2Lon, $p2Lat){
-        $this->getModuleConfig();
+
         //ref: https://blog.mathieu-leplatre.info/drape-lines-on-a-dem-with-postgis.html
         $sql = sprintf('
             WITH
