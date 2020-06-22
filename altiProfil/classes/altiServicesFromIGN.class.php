@@ -1,20 +1,20 @@
 <?php
 
-Class getAltiServicesFromIGN{
+Class getAltiServicesFromIGN {
+
     protected $IgnServiceKey = "";
-    protected $IgnServiceUrl = "";    
+    protected $IgnServiceUrl = "";
     protected $Altisource = "";
 
     /**
      * Get config parameters
     **/
-    function getModuleConfig(){
+    function __construct(){
         $localConfig = jApp::configPath('localconfig.ini.php');
-        $localConfig = new jIniFileModifier($localConfig);                
+        $localConfig = new jIniFileModifier($localConfig);
         $this->IgnServiceKey = $localConfig->getValue('ignServiceKey', 'altiProfil');
-        $this->IgnServiceUrl = $localConfig->getValue('ignServiceUrl', 'altiProfil'); 
-        $this->Altisource = $localConfig->getValue('altisource', 'altiProfil');      
-        return $localConfig;
+        $this->IgnServiceUrl = $localConfig->getValue('ignServiceUrl', 'altiProfil');
+        $this->Altisource = $localConfig->getValue('altisource', 'altiProfil');
     }
 
     /**
@@ -22,7 +22,6 @@ Class getAltiServicesFromIGN{
     **/
     public function getAlti($lon, $lat){
         $APIRestElev = "/alti/rest/elevation.json?";
-        $this->getModuleConfig();
 
         $data = array(
             'lon' => $lon,
@@ -30,11 +29,11 @@ Class getAltiServicesFromIGN{
         );
         $params = http_build_query($data, '', '&');
 
-        $urlAltiIGN = $this->IgnServiceUrl.$this->IgnServiceKey.$APIRestElev.$params;     
-        list($data, $mime, $code) = lizmapProxy::getRemoteData($urlAltiIGN);    
-        $code = 200;    
+        $urlAltiIGN = $this->IgnServiceUrl.$this->IgnServiceKey.$APIRestElev.$params;
+        list($data, $mime, $code) = lizmapProxy::getRemoteData($urlAltiIGN);
+        $code = 200;
         if ($code == 200) {
-            //DATA SHOULD BE LIKE '{"elevations":[{"x":55.38025625,"y":-21.14050849,"z":2154.75,"acc":2.5}]}'  
+            //DATA SHOULD BE LIKE '{"elevations":[{"x":55.38025625,"y":-21.14050849,"z":2154.75,"acc":2.5}]}'
             $data = '{"elevations":[{"x":55.38025625,"y":-21.14050849,"z":2154.75,"acc":2.5}]}' ;
             return $data;
         }else{
@@ -47,19 +46,18 @@ Class getAltiServicesFromIGN{
     /**
      * Get profil from IGN API
     **/
-    public function getProfil($p1Lon, $p1Lat, $p2Lon, $p2Lat, $sampling){        
+    public function getProfil($p1Lon, $p1Lat, $p2Lon, $p2Lat, $sampling){
         $APIRestProfil = "/alti/rest/elevation.json?";
-        $localConfig = $this->getModuleConfig();   
         $data = array(
             'lon' => $p1Lon."|".$p2Lon,
             'lat' => $p1Lat."|".$p2Lat,
             'sampling' => 10
         );
-        $params = http_build_query($data, '', '&');        
-        $fullURL = $this->IgnServiceUrl.$this->IgnServiceKey.$APIRestProfil.$params;                
-        list($data, $mime, $code) = lizmapProxy::getRemoteData($fullURL);    
-        
-        /* FOR TESTING 
+        $params = http_build_query($data, '', '&');
+        $fullURL = $this->IgnServiceUrl.$this->IgnServiceKey.$APIRestProfil.$params;
+        list($data, $mime, $code) = lizmapProxy::getRemoteData($fullURL);
+
+        /* FOR TESTING
         $data = '{
             "elevations": [
                 {
@@ -123,9 +121,9 @@ Class getAltiServicesFromIGN{
                     "acc": 2.5
                 }
             ]
-        }'; 
+        }';
         $code = 200;*/
-        
+
         if ($code == 200) {
             $ignProfilResponse = json_decode($data);
             $x = array();
@@ -133,26 +131,26 @@ Class getAltiServicesFromIGN{
             $customdata = array();
             $resolution = "";
             $i=0;
-            foreach($ignProfilResponse->elevations as $key => $value) {                
+            foreach($ignProfilResponse->elevations as $key => $value) {
                     $x[] = $i;
                     $y[] = $value->z;
                     $customdata[] = [$value->lon, $value->lat];
-                    $i = $i+1;                          
+                    $i = $i+1;
             }
             $data = [ [
                 "x" => $x,
-                "y" => $y,  
+                "y" => $y,
                 "customdata" => $customdata,
                 "srid" => 4326,
                 "altisource" => $this->Altisource,
                 "source" => 'IGN'
-             ] ];             
+             ] ];
             return json_encode($data);
         }else{
             $errorMsg = "AltiProfil IGN wrong request";
             jLog::log($errorMsg);
             return '{"error msg": "'.$data.'" }';
-        }       
+        }
     }
 }
 ?>

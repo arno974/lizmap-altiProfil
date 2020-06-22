@@ -10,7 +10,7 @@ Une fois le module téléchargé, renommez le dossier lizmap-altiProfil pour sim
 
 Il est ensuite nécessaire  dans le fichier localconfig.ini.php de Lizmap (situé dans lizmap/var/config) le bloc ci-dessous :
 
-```
+```ini
 [altiProfil]
 ;altiProfileProvider= database ou ign
 
@@ -23,12 +23,12 @@ ignServiceUrl=https://wxs.ign.fr/
 ;si cas database
 altiProfileProvider=database
 altiProfileTable=reunion_mnt
-srid=2975 
+srid=2975
 ```
 
 ## Cas de l'utilisation à partir de l'API IGN
 
-En raison de l'absence de continuité de service de l'offre Pro IGN, il n'a pas été possible de tester complément l'intégration de l'API. Les tests effectués ont été réalisés sur la base des exemples donnés dans la documentation. 
+En raison de l'absence de continuité de service de l'offre Pro IGN, il n'a pas été possible de tester complément l'intégration de l'API. Les tests effectués ont été réalisés sur la base des exemples donnés dans la documentation.
 
 Il est possible que l'intégration ne soit pas optimale, mais cela devrait tout de même être fonctionnel.
 
@@ -36,7 +36,7 @@ Il est possible que l'intégration ne soit pas optimale, mais cela devrait tout 
 
 Pour utiliser ce module en vous connectant à votre base de données, vous devrez disposer d'une base avec une table raster de type MNT. Vous devrez également ajouter au fichier profiles.ini.php (situé dans lizmap/var/config) le bloc ci-dessous :
 
-```
+```ini
 [jdb:altiProfil]
 driver=pgsql
 database=nom de la base
