@@ -6,15 +6,21 @@ Ce Module Lizmap permet la création de profils topographiques à partir du web 
 
 ![](https://github.com/arno974/lizmap-altiProfil/blob/master/altiProfil.jpeg?raw=true)
 
-Une fois le module téléchargé, renommez le dossier lizmap-altiProfil pour simplement altiProfil.
+Une fois le module téléchargé, il est nécessaire de l'installer à l'aide des scripts Lizmap:
 
-Il est ensuite nécessaire  dans le fichier localconfig.ini.php de Lizmap (situé dans lizmap/var/config) le bloc ci-dessous :
+```
+php lizmap/install/installer.php
+lizmap/install/clean_vartmp.sh
+lizmap/install/set_rights.sh
+```
+
+Il est ensuite nécessaire d'ajouter dans le fichier localconfig.ini.php de Lizmap (situé dans lizmap/var/config) le bloc ci-dessous :
 
 ```ini
 [altiProfil]
 ;altiProfileProvider= database ou ign
 
-altisource= Source des données // ex. SCHOM LITTO3D®
+altisource= Source des données ;ex. SCHOM LITTO3D®
 
 ;si cas IGN
 ignServiceKey=votre clé IGN
@@ -25,6 +31,8 @@ altiProfileProvider=database
 altiProfileTable=reunion_mnt
 srid=2975
 ```
+
+Ce bloc permet de définir la source de vos données. Si vous souhaitez vous connecter au web service de l'IGN (altiProfileProvider=ign) ou a des données provenant de votre base (altiProfileProvider=database). En fonction de la source de données des options complémentaires doivent être précisées.
 
 ## Cas de l'utilisation à partir de l'API IGN
 
