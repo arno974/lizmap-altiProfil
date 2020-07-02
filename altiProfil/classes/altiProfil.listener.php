@@ -1,16 +1,22 @@
 <?php
 class altiProfilListener extends jEventListener{
 
-    protected function getAltiProviderConfig(){
+    protected function getAltiProviderConfig($configItem){
         $localConfig = jApp::configPath('localconfig.ini.php');
         $localConfig = new jIniFileModifier($localConfig);
-        $altiProvider = $localConfig->getValue('altiProfileProvider', 'altiProfil');
-        return $altiProvider ;
+        $configItemValue = $localConfig->getValue($configItem, 'altiProfil');
+        return $configItemValue ;
     }
 
-    function onmapDockable ( $event ) {
-        if($this->getAltiProviderConfig() == 'database' || $this->getAltiProviderConfig() == 'ign'){
-            $tpl = new jTpl();
+    function onmapDockable ( $event ) {        
+        if($this->getAltiProviderConfig('altiProfileProvider') == 'database' || $this->getAltiProviderConfig('altiProfileProvider') == 'ign'){
+            $tpl = new jTpl();               
+            $tpl->assign("altiProvider", $this->getAltiProviderConfig('altiProfileProvider'));
+            if( $this->getAltiProviderConfig('altiProfileProvider') == 'database' ){   
+                $profilUnit="";                 
+                $tpl->assign("profilUnit", $this->getAltiProviderConfig('profilUnit'));                    
+            }
+
             $dockable = new lizmapMapDockItem(
                 'altiProfil',
                 jLocale::get('altiProfil~altiProfil.dock.title'),
@@ -22,11 +28,11 @@ class altiProfilListener extends jEventListener{
         } else {
             $errorConfigMsg = jLocale::get('altiProfil~altiProfil.error.configMsg');
             jLog::log($errorConfigMsg);
-        }
+        }        
     }
 
-    function ongetMapAdditions ($event) {
-        if($this->getAltiProviderConfig() == 'database' || $this->getAltiProviderConfig() == 'ign'){
+    function ongetMapAdditions ($event) {        
+        if($this->getAltiProviderConfig('altiProfileProvider') == 'database' || $this->getAltiProviderConfig('altiProfileProvider') == 'ign'){
             $js = array();
             $jscode = array();
             $css = array();
@@ -55,9 +61,7 @@ class altiProfilListener extends jEventListener{
                     'css' => $css
                 )
             );
-
-
-        }
+        }        
     }
     function onmapMiniDockable ($event) { }
     function onmapRightDockable ($event) { }

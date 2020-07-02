@@ -95,16 +95,11 @@ function getProfil(p1,p2){
         var _customdata = data[0]['customdata'];
         var _srs = data[0]['srid'];
         var _altisource = data[0]['altisource'];
-        if (data[0]['source'] == "DB"){
-            var _resolution = data[0]['resolution'];
-            var _slope_degrees = data[0]['slope_degrees'];
-            var _slope_degrees = $.parseJSON(_slope_degrees);
-        }
 
         var layout = {
             title: '<b>'+LOCALES_ALTI_PROFIL+'</b>',
             xaxis: {
-                title: LOCALES_ALTI_DISTANCE,
+                title: LOCALES_ALTI_DISTANCE +' (m)',
                 showaxeslabels:false
             },
             yaxis: {
@@ -138,7 +133,11 @@ function getProfil(p1,p2){
         };
 
         //add extra info if datasource from DB
-        if (data[0]['source'] == "DB"){
+        if ( ALTI_PROVIDER == "database"){            
+            var _resolution = data[0]['resolution'];
+            var _slope = data[0]['slope'];
+            _slope = $.parseJSON(_slope);
+
             layout['title'] = '<b>Profil ('+ LOCALES_ALTI_RESOLUTION +' ' +_resolution+ 'm)';
             layout['annotations'].push(
                 {
@@ -150,7 +149,7 @@ function getProfil(p1,p2){
                     yref:'paper',
                     y: 1.10,
                     showarrow:false,
-                    text: `${LOCALES_ALTI_SLOPE} ${LOCALES_ALTI_SLOPE_DEGREES}  min :  ${_slope_degrees.min_slope} | max : ${_slope_degrees.max_slope} | ${LOCALES_ALTI_MEAN} : ${_slope_degrees.mean_slope}`
+                    text: `${LOCALES_ALTI_SLOPE} ${LOCALES_ALTI_UNIT}  min :  ${_slope.min_slope} | max : ${_slope.max_slope} | ${LOCALES_ALTI_MEAN} : ${_slope.mean_slope}`
                 }
             )
         }

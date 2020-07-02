@@ -5,6 +5,7 @@ Class GetAltiServicesFromDB {
     protected $Srid = "";
     protected $AltiProfileTable = "";
     protected $Altisource = "";
+    protected $profilUnit = "";
     protected $repository = Null;
     protected $project = Null;
 
@@ -16,6 +17,7 @@ Class GetAltiServicesFromDB {
         $this->Srid = $localConfig->getValue('srid', 'altiProfil');
         $this->AltiProfileTable = $localConfig->getValue('altiProfileTable', 'altiProfil');
         $this->Altisource = $localConfig->getValue('altisource', 'altiProfil');
+        $this->profilUnit = $localConfig->getValue('profilUnit', 'altiProfil');
 
         // Get project config: override table and source per project
         $this->repository = $repository;
@@ -99,8 +101,8 @@ Class GetAltiServicesFromDB {
                             ST_Transform(ST_SetSRID(ST_MakePoint(%2$f, %3$f),4326), %4$s),
                             ST_Transform(ST_SetSRID(ST_MakePoint(%5$f, %6$f),4326), %4$s)
                         )
-                    AS geom),
-                linemesure AS(
+                    AS geom
+                ), linemesure AS(
                 -- Add a mesure dimension to extract steps
                 SELECT
                     ST_AddMeasure(line.geom, 0, ST_Length(line.geom)) as linem,
@@ -164,7 +166,7 @@ Class GetAltiServicesFromDB {
         $sql = sprintf('
             WITH
                 line AS(
-                    -- From an arbitrary line
+                    -- Make the line from the input coordinates
                     SELECT
                         ST_MakeLine(
                             ST_Transform(ST_SetSRID(ST_MakePoint(%2$f, %3$f), 4326), %4$s),
@@ -172,12 +174,13 @@ Class GetAltiServicesFromDB {
                         )
                     AS geom
                 ), RasterCells AS (
-                    -- Get DEM elevation for each
+                    -- Intersect the line with the DEM
                     SELECT ST_Clip(%1$s.rast, line.geom, -9999, TRUE) as rast
                     FROM %1$s, line
                     WHERE ST_Intersects(%1$s.rast, line.geom)
                 ), rasterSlopStat AS (
-                    Select (ST_SummaryStatsAgg(ST_Slope(rast, 1, \'32BF\', \'DEGREES\', 1.0), 1, TRUE, 1)).*
+                    -- Compute the slope and the statistics
+                    Select (ST_SummaryStatsAgg(ST_Slope(rast, 1, \'32BF\', \'%7$s\', 1.0), 1, TRUE, 1)).*
                     FROM RasterCells
                 )
                 SELECT  (rasterSlopStat).count,
@@ -190,7 +193,8 @@ Class GetAltiServicesFromDB {
             $this->AltiProfileTable,
             $p1Lon, $p1Lat,
             $this->Srid,
-            $p2Lon, $p2Lat
+            $p2Lon, $p2Lat,
+            $profilUnit
         );
         $cnx = jDb::getConnection('altiProfil');
         $qResult = $cnx->query($sql);
@@ -204,8 +208,7 @@ Class GetAltiServicesFromDB {
             "srid" => $this->Srid,
             "resolution" => $resolution,
             "altisource" => $this->Altisource,
-            "slope_degrees" => $slope,
-            "source" => 'DB'
+            "slope" => $slope
          ] ];
 
         return json_encode($data);
