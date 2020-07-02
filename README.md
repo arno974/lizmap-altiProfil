@@ -24,10 +24,12 @@ Il est ensuite nécessaire d'ajouter dans le fichier localconfig.ini.php de Lizm
 altisource= Source des données 
 
 ;si cas IGN
+altiProfileProvider= ign
 ignServiceKey=votre clé IGN
 ignServiceUrl=https://wxs.ign.fr/
 
 ;si cas database
+altiProfileProvider= database
 altiProfileProvider=database
 altiProfileTable=reunion_mnt
 srid=2975
