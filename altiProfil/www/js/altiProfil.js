@@ -133,7 +133,7 @@ function getProfil(p1,p2){
         };
 
         //add extra info if datasource from DB
-        if ( ALTI_PROVIDER == "database"){            
+        if ( ALTI_PROVIDER == "database"){
             var _resolution = data[0]['resolution'];
             var _slope = data[0]['slope'];
             _slope = $.parseJSON(_slope);
@@ -281,32 +281,62 @@ function initAltiProfil() {
     var profilClick = new OpenLayers.Control.Click();
     map.addControl(profilClick);
 
+    function onAltiDockOpened() {
+        var controls = lizMap.map.controls;
+        controls.forEach(function (ctrl) {
+            if (ctrl.CLASS_NAME == 'OpenLayers.Control.WMSGetFeatureInfo'){
+                ctrl.deactivate();
+            }
+        });
+        altiProfilLayer.setVisibility(true);
+        profilClick.activate();
+    }
+
+    function onAltiDockClosed() {
+        var controls = lizMap.map.controls;
+        controls.forEach(function (ctrl) {
+            if (ctrl.CLASS_NAME == 'OpenLayers.Control.WMSGetFeatureInfo'){
+                ctrl.activate();
+            }
+        });
+        $('#altiProfil .menu-content #profil-chart-container').empty();
+        $('#altiProfil .menu-content span').html( "..." );
+        altiProfilLayer.destroyFeatures();
+        altiProfilLayer.setVisibility(false);
+        profilClick.deactivate();
+    }
+
     lizMap.events.on({
+        // Dock opened
         dockopened: function(e) {
-                if ( e.id == 'altiProfil' ) {
-                    var controls = lizMap.map.controls;
-                    controls.forEach(function (ctrl) {
-                        if (ctrl.CLASS_NAME == 'OpenLayers.Control.WMSGetFeatureInfo'){
-                            ctrl.deactivate();
-                        }
-                    });
-                    altiProfilLayer.setVisibility(true);
-                    profilClick.activate();
-                }
+            if ( e.id == 'altiProfil' ) {
+                onAltiDockOpened();
+            }
         },
+        minidockopened: function(e) {
+            if ( e.id == 'altiProfil' ) {
+                onAltiDockOpened();
+            }
+        },
+        rightdockopened: function(e) {
+            if ( e.id == 'altiProfil' ) {
+                onAltiDockOpened();
+            }
+        },
+        // Dock closed
         dockclosed: function(e) {
             if ( e.id == 'altiProfil' ) {
-                var controls = lizMap.map.controls;
-                controls.forEach(function (ctrl) {
-                    if (ctrl.CLASS_NAME == 'OpenLayers.Control.WMSGetFeatureInfo'){
-                        ctrl.activate();
-                    }
-                });
-                $('#altiProfil .menu-content #profil-chart-container').empty();
-                $('#altiProfil .menu-content span').html( "..." );
-                altiProfilLayer.destroyFeatures();
-                altiProfilLayer.setVisibility(false);
-                profilClick.deactivate();
+                onAltiDockClosed();
+            }
+        },
+        minidockclosed: function(e) {
+            if ( e.id == 'altiProfil' ) {
+                onAltiDockClosed();
+            }
+        },
+        rightdockclosed: function(e) {
+            if ( e.id == 'altiProfil' ) {
+                onAltiDockClosed();
             }
         }
     });
