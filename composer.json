@@ -22,7 +22,7 @@
         "jelix" : {
             "modules": [
                 "altiProfil/",
-                "altiProfilAdmin/",
+                "altiProfilAdmin/"
             ]
         }
     }
