@@ -1,37 +1,79 @@
 <?php
 class altiProfilListener extends jEventListener{
 
-    protected function getAltiProviderConfig($configItem){
+    protected function getAltiProviderConfig($configItem) {
         $localConfig = jApp::configPath('localconfig.ini.php');
         $localConfig = new jIniFileModifier($localConfig);
         $configItemValue = $localConfig->getValue($configItem, 'altiProfil');
-        return $configItemValue ;
+        $defaultValues = array(
+            'altiProfileProvider'=>'database',
+            'dock'=>'dock',
+            'srid'=>'3857',
+            'profilUnit'=>'PERCENT',
+        );
+        if (empty($configItemValue) and array_key_exists($configItem, $defaultValues)) {
+            $configItemValue = $defaultValues[$configItem];
+        }
+        return $configItemValue;
     }
 
-    function onmapDockable ( $event ) {        
-        if($this->getAltiProviderConfig('altiProfileProvider') == 'database' || $this->getAltiProviderConfig('altiProfileProvider') == 'ign'){
-            $tpl = new jTpl();               
-            $tpl->assign("altiProvider", $this->getAltiProviderConfig('altiProfileProvider'));
-            if( $this->getAltiProviderConfig('altiProfileProvider') == 'database' ){   
-                $profilUnit="";                 
-                $tpl->assign("profilUnit", $this->getAltiProviderConfig('profilUnit'));                    
-            }
+    private function getDockContent() {
+        $tpl = new jTpl();
+        $tpl->assign("altiProvider", $this->getAltiProviderConfig('altiProfileProvider'));
+        if( $this->getAltiProviderConfig('altiProfileProvider') == 'database' ){
+            $profilUnit="";
+            $tpl->assign("profilUnit", $this->getAltiProviderConfig('profilUnit'));
+        }
 
-            $dockable = new lizmapMapDockItem(
-                'altiProfil',
-                jLocale::get('altiProfil~altiProfil.dock.title'),
-                $tpl->fetch('altiProfil~altiProfil_Dock'),
-                5,
-                '<span class="icon-altiProfil"></span>'
-            );
+        $dockable = new lizmapMapDockItem(
+            'altiProfil',
+            jLocale::get('altiProfil~altiProfil.dock.title'),
+            $tpl->fetch('altiProfil~altiProfil_Dock'),
+            5,
+            '<span class="icon-altiProfil"></span>'
+        );
+        return $dockable;
+    }
+
+    function onmapDockable ( $event ) {
+        if ($this->getAltiProviderConfig('dock') != 'dock') {
+            return Null;
+        }
+        if ($this->getAltiProviderConfig('altiProfileProvider') == 'database' || $this->getAltiProviderConfig('altiProfileProvider') == 'ign') {
+            $dockable = $this->getDockContent();
             $event->add($dockable);
         } else {
             $errorConfigMsg = jLocale::get('altiProfil~altiProfil.error.configMsg');
             jLog::log($errorConfigMsg);
-        }        
+        }
     }
+    function onmapMiniDockable ($event) {
+        if ($this->getAltiProviderConfig('dock') != 'minidock') {
+            return Null;
+        }
+        if ($this->getAltiProviderConfig('altiProfileProvider') == 'database' || $this->getAltiProviderConfig('altiProfileProvider') == 'ign') {
+            $dockable = $this->getDockContent();
+            $event->add($dockable);
+        } else {
+            $errorConfigMsg = jLocale::get('altiProfil~altiProfil.error.configMsg');
+            jLog::log($errorConfigMsg);
+        }
+    }
+    function onmapRightDockable ($event) {
+        if ($this->getAltiProviderConfig('dock') != 'rightdock') {
+            return Null;
+        }
+        if ($this->getAltiProviderConfig('altiProfileProvider') == 'database' || $this->getAltiProviderConfig('altiProfileProvider') == 'ign') {
+            $dockable = $this->getDockContent();
+            $event->add($dockable);
+        } else {
+            $errorConfigMsg = jLocale::get('altiProfil~altiProfil.error.configMsg');
+            jLog::log($errorConfigMsg);
+        }
+    }
+    function onmapBottomDockable ($event) { }
 
-    function ongetMapAdditions ($event) {        
+    function ongetMapAdditions ($event) {
         if($this->getAltiProviderConfig('altiProfileProvider') == 'database' || $this->getAltiProviderConfig('altiProfileProvider') == 'ign'){
             $js = array();
             $jscode = array();
@@ -61,11 +103,8 @@ class altiProfilListener extends jEventListener{
                     'css' => $css
                 )
             );
-        }        
+        }
     }
-    function onmapMiniDockable ($event) { }
-    function onmapRightDockable ($event) { }
-    function onmapBottomDockable ($event) { }
 
     protected function getDatavizStatus ($event) {
         $project = $event->getParam( 'project' );
