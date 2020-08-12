@@ -10,7 +10,7 @@ Class getAltiServicesFromIGN {
      * Get config parameters
     **/
     function __construct(){
-        $localConfig = jApp::configPath('localconfig.ini.php');
+        $localConfig = jApp::configPath('altiProfil.ini.php');
         $localConfig = new jIniFileModifier($localConfig);
         $this->IgnServiceKey = $localConfig->getValue('ignServiceKey', 'altiProfil');
         $this->IgnServiceUrl = $localConfig->getValue('ignServiceUrl', 'altiProfil');

@@ -2,8 +2,8 @@
 class altiProfilListener extends jEventListener{
 
     protected function getAltiProviderConfig($configItem) {
-        $localConfig = jApp::configPath('localconfig.ini.php');
-        $localConfig = new jIniFileModifier($localConfig);
+        $altiProfilConfigFile = jApp::configPath('altiProfil.ini.php');
+        $localConfig = new jIniFileModifier($altiProfilConfigFile);
         $configItemValue = $localConfig->getValue($configItem, 'altiProfil');
         $defaultValues = array(
             'altiProfileProvider'=>'database',

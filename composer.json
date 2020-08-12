@@ -1,5 +1,5 @@
 {
-    "name": "lizmap/lizmap-altiProfil",
+    "name": "lizmap/lizmap-altiprofil",
     "type": "jelix-module",
     "description": "Jelix module for Lizmap, which adds tools to get a profile graph from a DEM",
     "keywords": ["module", "jelix", "lizmap", "altitude", "dem", "profile"],
@@ -10,6 +10,10 @@
             "name": "Arnaud VANDECASTEELE",
             "email": "arnaud.sig@gmail.com"
         }
+        {
+            "name": "Michaël DOUCHIN",
+            "email": "mdouchin@3liz.com"
+        }
     ],
     "require": {
     },
@@ -17,7 +21,8 @@
     "extra" : {
         "jelix" : {
             "modules": [
-                "altiProfil/"
+                "altiProfil/",
+                "altiProfilAdmin/",
             ]
         }
     }

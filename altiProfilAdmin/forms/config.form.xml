@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form xmlns="http://jelix.org/ns/forms/1.1">
+
+<group ref="main">
+  <label locale="altiProfilAdmin~admin.form.group.main.label"/>
+
+  <menulist ref="altiProfileProvider" required="true">
+      <label locale="altiProfilAdmin~admin.form.altiProfileProvider.label"/>
+      <item value="database" selected="true" locale="altiProfilAdmin~admin.form.altiProfileProvider.database.label"/>
+      <item value="ign" locale="altiProfilAdmin~admin.form.altiProfileProvider.ign.label"/>
+  </menulist>
+
+  <textarea ref="altisource" defaultvalue="Source ©" required="true">
+   <label locale="altiProfilAdmin~admin.form.altisource.label" />
+  </textarea>
+
+  <menulist ref="profilUnit" required="true">
+    <label locale="altiProfilAdmin~admin.form.profilUnit.label" />
+      <item value="PERCENT" selected="true" locale="altiProfilAdmin~admin.form.profilUnit.percent.label"/>
+      <item value="DEGREES" locale="altiProfilAdmin~admin.form.profilUnit.degrees.label"/>
+  </menulist>
+
+  <menulist ref="dock" required="true">
+    <label locale="altiProfilAdmin~admin.form.dock.label" />
+      <item value="dock" selected="true" locale="altiProfilAdmin~admin.form.dock.dock.label"/>
+      <item value="minidock" locale="altiProfilAdmin~admin.form.dock.minidock.label"/>
+      <item value="rightdock" locale="altiProfilAdmin~admin.form.dock.rightdock.label"/>
+  </menulist>
+
+</group>
+
+<group ref="database">
+  <label locale="altiProfilAdmin~admin.form.group.database.label"/>
+
+  <input ref="altiProfileTable" type="string" defaultvalue="dem_table">
+   <label locale="altiProfilAdmin~admin.form.altiProfileTable.label" />
+  </input>
+
+  <input ref="srid" type="integer" defaultvalue="3857">
+   <label locale="altiProfilAdmin~admin.form.srid.label" />
+  </input>
+
+</group>
+
+
+<group ref="ign">
+  <label>IGN</label>
+
+  <input ref="ignServiceKey" type="string" defaultvalue="choisirgeoportail">
+   <label locale="altiProfilAdmin~admin.form.ignServiceKey.label" />
+  </input>
+
+  <input ref="ignServiceUrl" type="string" defaultvalue="https://wxs.ign.fr/">
+   <label locale="altiProfilAdmin~admin.form.ignServiceUrl.label" />
+  </input>
+
+</group>
+
+
+<submit ref="_submit">
+    <label locale="admin~admin.form.admin_services.submit.label"/>
+</submit>
+</form>

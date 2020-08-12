@@ -12,8 +12,8 @@ Class GetAltiServicesFromDB {
     function __construct($repository, $project) {
 
         // Get global config
-        $localConfig = jApp::configPath('localconfig.ini.php');
-        $localConfig = new jIniFileModifier($localConfig);
+        $altiProfilConfigFile = jApp::configPath('altiProfil.ini.php');
+        $localConfig = new jIniFileModifier($altiProfilConfigFile);
         $this->Srid = $localConfig->getValue('srid', 'altiProfil');
         $this->AltiProfileTable = $localConfig->getValue('altiProfileTable', 'altiProfil');
         $this->Altisource = $localConfig->getValue('altisource', 'altiProfil');
@@ -194,7 +194,7 @@ Class GetAltiServicesFromDB {
             $p1Lon, $p1Lat,
             $this->Srid,
             $p2Lon, $p2Lat,
-            $profilUnit
+            $this->profilUnit
         );
         $cnx = jDb::getConnection('altiProfil');
         $qResult = $cnx->query($sql);

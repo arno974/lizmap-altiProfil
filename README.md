@@ -8,38 +8,50 @@ Ce Module Lizmap permet la création de profils topographiques à partir du web 
 
 Une fois le module téléchargé, il est nécessaire de l'installer à l'aide des scripts Lizmap:
 
+* module altiProfil
+* module altiProfilAdmin
+
+Ajouter dans le fichier `lizmap/var/config/localconfig.ini.php`, sous la section `[module]`, la référence à ces 2 modules. Ne pas supprimer les références aux autres modules pour cette section.
+
+```ini
+[modules]
+
+altiProfil.access=2
+altiProfilAdmin.access=2
+
 ```
+
+Puis lancer l'installation des modules via
+
+```bash
 php lizmap/install/installer.php
 lizmap/install/clean_vartmp.sh
 lizmap/install/set_rights.sh
 ```
 
-Il est ensuite nécessaire d'ajouter dans le fichier localconfig.ini.php de Lizmap (situé dans lizmap/var/config) le bloc ci-dessous :
+Il est ensuite nécessaire de se rendre à la page d'administration de Lizmap Web Client, et de configurer le module. Cette configuration crée ou modifie le fichier `lizmap/var/config/altiProfil.ini.php`, qui contiendra par exemple:
 
 ```ini
 [altiProfil]
-;altiProfileProvider= database ou ign
-
-;altisource = ex. SCHOM LITTO3D®
 altisource= Source des données
 
-;si cas IGN
-altiProfileProvider= ign
-ignServiceKey=votre clé IGN
-ignServiceUrl=https://wxs.ign.fr/
-
 ;si cas database
-altiProfileProvider= database
 altiProfileProvider=database
-altiProfileTable=reunion_mnt
-srid=2975
-;; profilUnit = PERCENT or DEGREES - choix de l'unité de calcul du profil
+altiProfileTable=dem_table
+srid=3957
+; profilUnit = PERCENT or DEGREES - choix de l'unité de calcul du profil
 profilUnit= PERCENT
 ; dock panel = dock or minidock or rightdock
 dock=dock
+
+;si cas IGN
+;altiProfileProvider= ign
+ignServiceKey=votre clé IGN
+ignServiceUrl=https://wxs.ign.fr/
+
 ```
 
-Ce bloc permet de définir la source de vos données. Si vous souhaitez vous connecter au web service de l'IGN (altiProfileProvider=ign) ou a des données provenant de votre base (altiProfileProvider=database). En fonction de la source de données des options complémentaires doivent être précisées.
+Vous pouvez ainsi définir et configurer la source de vos données. Si vous souhaitez vous connecter au web service de l'IGN (altiProfileProvider=ign) ou a des données provenant de votre base (altiProfileProvider=database). En fonction de la source de données des options complémentaires doivent être précisées.
 
 ## Cas de l'utilisation à partir de l'API IGN
 
@@ -49,7 +61,7 @@ Il est possible que l'intégration ne soit pas optimale, mais cela devrait tout 
 
 ## Cas de l'utilisation à partir d'une base de données
 
-Pour utiliser ce module en vous connectant à votre base de données, vous devrez disposer d'une base avec une table raster de type MNT. Vous devrez également ajouter au fichier profiles.ini.php (situé dans lizmap/var/config) le bloc ci-dessous :
+Pour utiliser ce module en vous connectant à votre base de données, vous devrez disposer d'une base avec une table raster de type MNT. Vous devrez également ajouter au fichier `profiles.ini.php` (situé dans `lizmap/var/config`) le bloc ci-dessous :
 
 ```ini
 [jdb:altiProfil]

@@ -6,7 +6,7 @@ class ajaxCtrl extends jController {
      * Get config parameters
     **/
     function getModuleConfig(){
-        $localConfig = jApp::configPath('localconfig.ini.php');
+        $localConfig = jApp::configPath('altiProfil.ini.php');
         $localConfig = new jIniFileModifier($localConfig);
         $altiProvider = $localConfig->getValue('altiProfileProvider', 'altiProfil');
         return $altiProvider;
