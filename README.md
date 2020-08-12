@@ -53,6 +53,21 @@ ignServiceUrl=https://wxs.ign.fr/
 
 Vous pouvez ainsi définir et configurer la source de vos données. Si vous souhaitez vous connecter au web service de l'IGN (altiProfileProvider=ign) ou a des données provenant de votre base (altiProfileProvider=database). En fonction de la source de données des options complémentaires doivent être précisées.
 
+## Surcharge de la configuration par projet
+
+Pour chaque projet QGIS publié dans Lizmap, par exemple `my_project.qgs` vous pouvez ajouter un fichier avec une extension en plus `.alti` à la fin du nom, ce qui donne par exemple `my_project.qgs.alti`. Ce fichier permet de surcharger, s'il est présent, certains paramètres.
+
+Par exemple
+
+```ini
+[altiProfil]
+altisource="SRTM Montpellier high-resolution"
+altiProfileTable=srtm_montpellier_high_resolution
+srid=3857
+```
+
+
+
 ## Cas de l'utilisation à partir de l'API IGN
 
 En raison de l'absence de continuité de service de l'offre Pro IGN, il n'a pas été possible de tester complément l'intégration de l'API. Les tests effectués ont été réalisés sur la base des exemples donnés dans la documentation.
