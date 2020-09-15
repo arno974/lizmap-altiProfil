@@ -29,7 +29,11 @@ lizmap/install/clean_vartmp.sh
 lizmap/install/set_rights.sh
 ```
 
-Il est ensuite nécessaire de se rendre à la page d'administration de Lizmap Web Client, et de configurer le module. Cette configuration crée ou modifie le fichier `lizmap/var/config/altiProfil.ini.php`, qui contiendra par exemple:
+Il est ensuite nécessaire de se rendre à la page d'administration de Lizmap Web Client, et de configurer le module. 
+
+![](https://github.com/arno974/lizmap-altiProfil/blob/master/altiProfilAdmin.png?raw=true)
+
+Cette configuration crée ou modifie le fichier `lizmap/var/config/altiProfil.ini.php`, qui contiendra par exemple:
 
 ```ini
 [altiProfil]
@@ -65,8 +69,6 @@ altisource="SRTM Montpellier high-resolution"
 altiProfileTable=srtm_montpellier_high_resolution
 srid=3857
 ```
-
-
 
 ## Cas de l'utilisation à partir de l'API IGN
 
