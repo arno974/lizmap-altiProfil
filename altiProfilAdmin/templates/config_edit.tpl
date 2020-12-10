@@ -7,3 +7,5 @@
 <div>
   <a class="btn" href="{jurl 'altiProfilAdmin~config:index'}">{@admin~admin.configuration.button.back.label@}</a>
 </div>
+
+{meta_htmlmodule js  'altiProfilAdmin', 'js/alti_profil_config.js'}
