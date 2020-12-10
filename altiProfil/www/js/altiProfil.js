@@ -163,6 +163,9 @@ function getProfil(p1,p2){
               color: 'rgb(128, 0, 128)',
               width: 1
             }
+            ,hovertemplate: '<b>Altitude</b>: %{y}' +
+            '<br /><b>lon</b> : %{customdata[0].lon:.2f} / <b>lat</b> : %{customdata[0].lat:.2f}</b>'+
+            '<extra></extra>'
           };
         var data = [profilLine];
 
@@ -186,12 +189,11 @@ function getProfil(p1,p2){
         $('#altiProfil .menu-content #profil-chart .spinner').hide();
         var myPlot = document.getElementById('profil-chart-container');
 
-        myPlot.on('plotly_click', function(data){
-            var pts = '';
-            p = data.points[0].customdata;
+        myPlot.on('plotly_click', function(data){            
+            p = data.points[0].customdata[0];
             var fromProjection = new OpenLayers.Projection('EPSG:'+_srs);
             var toProjection = new OpenLayers.Projection(lizMap.map.projection.projCode);
-            var p1ConvertedPoint = new OpenLayers.LonLat(p[0], p[1]);
+            var p1ConvertedPoint = new OpenLayers.LonLat(p.lon, p.lat);
             p1ConvertedPoint.transform(fromProjection, toProjection);
             var layer = lizMap.map.getLayersByName('altiProfilLayer')[0];
             if(layer.features.length>3){
