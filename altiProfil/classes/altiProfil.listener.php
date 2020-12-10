@@ -78,9 +78,8 @@ class altiProfilListener extends jEventListener{
             $js = array();
             $jscode = array();
             $css = array();
-
             $js [] = jUrl::get('jelix~www:getfile', array('targetmodule'=>'altiProfil', 'file'=>'js/altiProfil.js'));
-            $js [] = jUrl::get('jelix~www:getfile', array('targetmodule'=>'altiProfil', 'file'=>'js/PointTrack.js'));
+
             // Add Dataviz if not already available
             if ( !$this->getDatavizStatus($event) ) {
                 $bp = jApp::config()->urlengine['basePath'];
