@@ -4,7 +4,6 @@ $( document ).ready(function() {
     $( selectProvider ).change(function() {
         altiProfilOptionsProvider($(selectProvider).val());
     });
-
 });
 
 function altiProfilOptionsProvider(selectedProvider){
@@ -13,7 +12,6 @@ function altiProfilOptionsProvider(selectedProvider){
         if(provider === selectedProvider){
             $("#jforms_altiProfilAdmin_config_" + selectedProvider).parent().show();
         }else{
-            console.log(provider);
             $("#jforms_altiProfilAdmin_config_" + provider).parent().hide();
         }
     }
