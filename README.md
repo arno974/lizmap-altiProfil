@@ -1,15 +1,47 @@
 # lizmap-altiProfil
 
-## Description et utilisation
 
-Ce Module Lizmap permet la création de profils topographiques à partir du web service de l'IGN ou d'une base postgis disposant d'une table raster avec un MNT.
+Ce Module Lizmap permet la création de profils topographiques à partir du web 
+service de l'IGN ou d'une base postgis disposant d'une table raster avec un MNT.
 
 ![](https://github.com/arno974/lizmap-altiProfil/blob/master/altiProfil.jpeg?raw=true)
 
-Une fois le module téléchargé, il est nécessaire de l'installer à l'aide des scripts Lizmap:
 
-* module altiProfil
-* module altiProfilAdmin
+## Installation
+
+Depuis la version 0.2.2 du module, il est souhaitable de l'installer avec
+[Composer](https://getcomposer.org), le système de paquet pour PHP. 
+Si vous ne pouvez pas, ou si vous utilisez lizmap 3.3 ou inférieur, passez à la 
+section sur l'installation manuelle.
+
+### Installation automatique avec Composer et lizmap 3.4 ou plus
+
+* dans `lizmap/my-packages`, créer le fichier `composer.json` s'il n'existe pas
+  déjà, en copiant le fichier `composer.json.dist`, qui s'y trouve. Puis lancez
+  Composer pour installer les fichiers de AltiProfil.
+
+```bash
+cp -n lizmap/my-packages/composer.json.dist lizmap/my-packages/composer.json
+composer require --working-dir=lizmap/my-packages "lizmap/lizmap-altiprofil"
+```
+
+* Ensuite lancez les scripts d'installation de Lizmap :
+
+```bash
+php lizmap/install/installer.php
+./lizmap/install/clean_vartmp.sh
+./lizmap/install/set_rights.sh
+```
+`
+Passez à la section sur la configuration.
+
+### Installation manuelle dans lizmap 3.3 ou 3.4 sans Composer
+
+* Téléchargez l'archive zip à partir de la [page release de github](https://github.com/arno974/lizmap-altiProfil/releases).
+* Désarchivez le zip et copiez les répertoires `AltiProfil`, et `AltiProfilAdmin`
+  dans le dossier `lizmap/lizmap-module/`
+* Il faut ensuite activer les modules dans lizmap, en éditant des fichiers
+  de configuration situés dans  `lizmap/var/config`.
 
 Ajouter dans le fichier `lizmap/var/config/localconfig.ini.php`, sous la section `[module]`, la référence à ces 2 modules. Ne pas supprimer les références aux autres modules pour cette section.
 
@@ -21,13 +53,16 @@ altiProfilAdmin.access=2
 
 ```
 
-Puis lancer l'installation des modules via
+* Puis lancer l'installation des modules via
 
 ```bash
 php lizmap/install/installer.php
 lizmap/install/clean_vartmp.sh
 lizmap/install/set_rights.sh
 ```
+
+## Configuration
+
 
 Il est ensuite nécessaire de se rendre à la page d'administration de Lizmap Web Client, et de configurer le module. 
 

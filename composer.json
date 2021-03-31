@@ -23,7 +23,19 @@
             "modules": [
                 "altiProfil/",
                 "altiProfilAdmin/"
-            ]
+            ],
+            "autoconfig-access-16" : {
+                "lizmap@3liz.com" : {
+                    "altiProfil": {
+                        "__global": 1,
+                        "index" : 2
+                    },
+                    "altiProfilAdmin": {
+                        "__global": 1,
+                        "admin" : 2
+                    }
+                }
+            }
         }
     }
 }
