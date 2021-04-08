@@ -1,5 +1,5 @@
 {
-    "name": "lizmap/lizmap-altiprofil",
+    "name": "arno974/lizmap-altiprofil",
     "type": "jelix-module",
     "description": "Jelix module for Lizmap, which adds tools to get a profile graph from a DEM",
     "keywords": ["module", "jelix", "lizmap", "altitude", "dem", "profile"],
