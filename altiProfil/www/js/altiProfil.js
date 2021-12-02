@@ -86,7 +86,7 @@ function getProfil(p1,p2){
         'srs': lizMap.map.projection.projCode,
         'repository': lizUrls.params.repository,
         'project': lizUrls.params.project,
-        'sampling' : Math.round(p1.distanceTo(p2))/2 /* Seulement utilisé pour l'IGN => Nombre de points constituant le graphique */
+        'sampling' : Math.round(p1.distanceTo(p2))/2 /* Only use with french mapping Agency (IGN) web service  */
     }
 
     getProfilJsonResponse(qParams, function(data){
@@ -275,7 +275,10 @@ function initAltiProfil() {
                 altiProfilLayer.addFeatures(
                     [new OpenLayers.Feature.Vector(new OpenLayers.Geometry.LineString([p1Geom, p2Geom]))]
                 );
+                
                 getProfil(p1Geom, p2Geom);
+                //setTimeout(() => { getProfil(p1Geom, p2Geom); }, 5000);
+
                 $('#altiProfil .menu-content #profil-chart').show();
             }
         }

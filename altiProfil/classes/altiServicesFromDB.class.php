@@ -18,6 +18,7 @@ Class GetAltiServicesFromDB {
         $this->AltiProfileTable = $localConfig->getValue('altiProfileTable', 'altiProfil');
         $this->Altisource = $localConfig->getValue('altisource', 'altiProfil');
         $this->profilUnit = $localConfig->getValue('profilUnit', 'altiProfil');
+        $this->AltiResolution = $localConfig->getValue('altiresolution', 'altiProfil');
 
         // Get project config: override table and source per project
         $this->repository = $repository;
@@ -110,14 +111,15 @@ Class GetAltiServicesFromDB {
                         generate_series(
                             0,
                             ST_Length(line.geom)::int,
+                            --for very long line we reduce the steps
                             CASE
-                                WHEN ST_Length(line.geom)::int < 1000 THEN 5
-                                ELSE 20
+                                WHEN ST_Length(line.geom)::int < 1000 THEN %8$d
+                                ELSE %8$d*5
                             END
                         ) as i,
                         CASE
-                            WHEN ST_Length(line.geom)::int < 1000 THEN 5
-                            ELSE 20
+                            WHEN ST_Length(line.geom)::int < 1000 THEN %8$d
+                            ELSE %8$d*5
                         END as resolution
                     FROM line
                 ), 
@@ -154,7 +156,8 @@ Class GetAltiServicesFromDB {
             $p1Lon, $p1Lat,
             $this->Srid,
             $p2Lon, $p2Lat,
-            $this->profilUnit
+            $this->profilUnit,
+            $this->AltiResolution,
         );
         $cnx = jDb::getConnection('altiProfil');
         $qResult = $cnx->query($sql);

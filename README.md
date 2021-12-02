@@ -82,6 +82,7 @@ srid=3957
 profilUnit= PERCENT
 ; dock panel = dock or minidock or rightdock
 dock=dock
+altiresolution= résolution du MNT
 
 ;si cas IGN
 ;altiProfileProvider= ign
