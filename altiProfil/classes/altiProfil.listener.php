@@ -10,6 +10,7 @@ class altiProfilListener extends jEventListener{
             'dock'=>'dock',
             'srid'=>'3857',
             'profilUnit'=>'PERCENT',
+            'altiresolution'=>25
         );
         if (empty($configItemValue) and array_key_exists($configItem, $defaultValues)) {
             $configItemValue = $defaultValues[$configItem];

@@ -14,6 +14,10 @@
    <label locale="altiProfilAdmin~admin.form.altisource.label" />
   </textarea>
 
+  <input ref="altiresolution" required="true" type="integer">
+   <label locale="altiProfilAdmin~admin.form.altiresolution.label" />
+  </input>
+
   <menulist ref="profilUnit" required="true">
     <label locale="altiProfilAdmin~admin.form.profilUnit.label" />
       <item value="PERCENT" selected="true" locale="altiProfilAdmin~admin.form.profilUnit.percent.label"/>
