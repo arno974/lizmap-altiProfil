@@ -85,6 +85,7 @@ class ajaxCtrl extends jController {
                 jClasses::inc('altiProfil~altiServicesFromIGN');
                 $altiProviderInstance = new GetAltiServicesFromIGN();
                 $rep->data = $altiProviderInstance->getProfil($p1Lon, $p1Lat, $p2Lon, $p2Lat, $sampling);
+                return $rep;
             }elseif ( $altiProvider == 'database' ) {
                 jClasses::inc('altiProfil~altiServicesFromDB');
                 $repository = $this->param('repository');
@@ -95,6 +96,9 @@ class ajaxCtrl extends jController {
             }else{
                 return $this->errorMsg("Wrong or No Alti Provider defined (config $this->AltiProvider)");
             }
+        }
+        else {
+            return null;
         }
     }
 }

@@ -34,7 +34,9 @@ Class getAltiServicesFromIGN {
         $code = 200;
         if ($code == 200) {
             //DATA SHOULD BE LIKE '{"elevations":[{"x":55.38025625,"y":-21.14050849,"z":2154.75,"acc":2.5}]}'
+            /* FOR TESTING
             $data = '{"elevations":[{"x":55.38025625,"y":-21.14050849,"z":2154.75,"acc":2.5}]}' ;
+            */
             return $data;
         }else{
             $errorMsg = "AltiProfil IGN wrong request";
@@ -47,7 +49,7 @@ Class getAltiServicesFromIGN {
      * Get profil from IGN API
     **/
     public function getProfil($p1Lon, $p1Lat, $p2Lon, $p2Lat, $sampling){
-        $APIRestProfil = "/alti/rest/elevation.json?";
+        $APIRestProfil = "/alti/rest/elevationLine.json?";
         $data = array(
             'lon' => $p1Lon."|".$p2Lon,
             'lat' => $p1Lat."|".$p2Lat,

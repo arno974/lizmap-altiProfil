@@ -6,7 +6,7 @@ class altiProfilListener extends jEventListener{
         $localConfig = new jIniFileModifier($altiProfilConfigFile);
         $configItemValue = $localConfig->getValue($configItem, 'altiProfil');
         $defaultValues = array(
-            'altiProfileProvider'=>'database',
+            'altiProfileProvider'=>'ign',
             'dock'=>'dock',
             'srid'=>'3857',
             'profilUnit'=>'PERCENT',
