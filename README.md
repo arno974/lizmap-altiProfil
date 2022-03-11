@@ -1,5 +1,8 @@
 # lizmap-altiProfil
 
+[![Packagist](https://img.shields.io/packagist/v/arno974/lizmap-altiprofil)](https://packagist.org/packages/arno974/lizmap-altiprofil)
+
+## Description
 
 Ce Module Lizmap permet la création de profils topographiques à partir du web 
 service de l'IGN ou d'une base postgis disposant d'une table raster avec un MNT.
@@ -22,7 +25,7 @@ section sur l'installation manuelle.
 
 ```bash
 cp -n lizmap/my-packages/composer.json.dist lizmap/my-packages/composer.json
-composer require --working-dir=lizmap/my-packages "lizmap/lizmap-altiprofil"
+composer require --working-dir=lizmap/my-packages "arno974/lizmap-altiprofil"
 ```
 
 * Ensuite lancez les scripts d'installation de Lizmap :
