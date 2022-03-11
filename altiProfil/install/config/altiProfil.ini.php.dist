@@ -2,15 +2,15 @@
 altisource=Source des données
 
 ;si cas database
-altiProfileProvider=database
+;altiProfileProvider=database
 altiProfileTable=dem_table
 srid=3957
 ; profilUnit = PERCENT or DEGREES - choix de l'unité de calcul du profil
-profilUnit= PERCENT
+profilUnit=PERCENT
 ; dock panel = dock or minidock or rightdock
 dock=dock
 
 ;si cas IGN
-;altiProfileProvider= ign
-ignServiceKey=votre clé IGN
+altiProfileProvider=ign
+ignServiceKey=essentiels
 ignServiceUrl=https://wxs.ign.fr/
