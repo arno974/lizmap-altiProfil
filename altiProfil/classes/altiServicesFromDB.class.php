@@ -93,65 +93,68 @@ Class GetAltiServicesFromDB {
     protected function queryProfil($p1Lon, $p1Lat, $p2Lon, $p2Lat){
 
         //ref: https://blog.mathieu-leplatre.info/drape-lines-on-a-dem-with-postgis.html
+        //ref: https://www.crunchydata.com/blog/waiting-for-postgis-3.2-st_contour-and-st_setz
         $sql = sprintf('
             WITH
-                line AS(
-                    -- From an arbitrary line
+		        profile_line as (
                     SELECT
                         ST_MakeLine(
-                            ST_Transform(ST_SetSRID(ST_MakePoint(%2$f, %3$f),4326), %4$s),
-                            ST_Transform(ST_SetSRID(ST_MakePoint(%5$f, %6$f),4326), %4$s)
-                        )
-                    AS geom
-                ), 
-                linemesure AS(
-                    -- Add a mesure dimension to extract steps
-                    SELECT
-                        ST_AddMeasure(line.geom, 0, ST_Length(line.geom)) as linem,
-                        generate_series(
-                            0,
-                            ST_Length(line.geom)::int,
-                            --for very long line we reduce the steps
+                                    ST_Transform(ST_SetSRID(ST_MakePoint(%2$f, %3$f),4326), %4$s),
+                                    ST_Transform(ST_SetSRID(ST_MakePoint(%5$f, %6$f),4326), %4$s)) as geom
+                        ),
+                    linemesure AS(
+                        -- Add a measure dimension to extract steps
+                        SELECT
+
                             CASE
-                                WHEN ST_Length(line.geom)::int < 1000 THEN %8$d
+                                WHEN ST_Length(geom)::int < 1000 THEN %8$d
                                 ELSE %8$d*5
-                            END
-                        ) as i,
-                        CASE
-                            WHEN ST_Length(line.geom)::int < 1000 THEN %8$d
-                            ELSE %8$d*5
-                        END as resolution
-                    FROM line
-                ), 
-                points2d AS (
-                    SELECT ST_GeometryN(ST_LocateAlong(linem, i), 1) AS geom, resolution FROM linemesure
-                ),
-                cells AS (
-                    -- Get DEM elevation for each
-                    SELECT 
-                        p.geom AS geom, 
-                        ST_Value(%1$s.rast, 1, p.geom) AS val,                      
-                        resolution
-                    FROM %1$s, points2d p
-                    WHERE ST_Intersects(%1$s.rast, p.geom)
-                ),           
-                -- Instantiate 3D points
-                points3d AS (
-                    SELECT ST_SetSRID(
-                                ST_MakePoint(ST_X(geom), ST_Y(geom), val),
-                                %4$s
-                            ) AS geom, resolution FROM cells
-                ),
-                line3D AS(
-                    SELECT ST_MakeLine(geom)as geom, MAX(resolution) as resolution FROM points3d
-                ),
-                xz AS(
-                    SELECT (ST_DumpPoints(geom)).geom AS geom,
-                    ST_StartPoint(geom) AS origin, resolution
-                    FROM line3D
-                )
-            -- Build 3D line from 3D points
-            SELECT ST_distance(origin, geom) AS x, ST_Z(geom) as y, ST_X(geom) as lon, ST_Y(geom) as lat, resolution FROM xz',
+                            END as resolution, geom
+                        from profile_line
+
+                    ),
+
+				transect AS (
+					 SELECT ST_Segmentize(
+						geom,
+					   resolution
+						)::geometry
+					  AS geom,resolution
+					from linemesure
+					),
+					rast AS (
+					 SELECT ST_Union(%1$s.rast) AS rast, resolution
+					  FROM %1$s
+					  JOIN transect
+					  ON ST_Intersects(transect.geom, ST_ConvexHull(%1$s.rast))
+						group by transect.resolution
+					),
+					z AS (
+					  SELECT rast.resolution,(ST_DumpPoints(ST_SetZ(rast.rast, transect.geom, resample => \'bilinear\'))).*
+					 FROM rast
+					  CROSS JOIN transect
+					),
+					cells AS (
+						SELECT round(ST_Z(geom)) AS val, geom, resolution
+					FROM z
+					),
+					-- Instantiate 3D points
+	                points3d AS (
+	                    SELECT ST_SetSRID(
+	                                ST_MakePoint(ST_X(geom), ST_Y(geom), val),
+	                                %4$s
+	                            ) AS geom, resolution FROM cells
+	                ),
+	                line3D AS(
+	                    SELECT ST_MakeLine(geom)as geom, MAX(resolution) as resolution FROM points3d
+	                ),
+	                xz AS(
+	                    SELECT (ST_DumpPoints(geom)).geom AS geom,
+	                    ST_StartPoint(geom) AS origin, resolution
+	                    FROM line3D
+	                )
+	            -- Build 3D line from 3D points
+	            SELECT ST_distance(origin, geom) AS x, ST_Z(geom) as y, ST_X(ST_Transform(geom, 4326)) as lon, ST_Y(ST_Transform(geom, 4326)) as lat, resolution FROM xz',
             $this->AltiProfileTable,
             $p1Lon, $p1Lat,
             $this->Srid,

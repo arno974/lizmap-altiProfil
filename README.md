@@ -128,3 +128,5 @@ user=nom de l'utilisateur de la base
 password=mot de passe de l'utilisateur
 search_path=si la table se trouve dans un schéma particulier sinon mettez simplement public
 ```
+**Note** Si vous avez besoin d'utiliser un modèle d'élévation numérique chargé dans la base de données. Il est
+recommandé d'utiliser PostgreSQL 14 et PostGIS 3.2
