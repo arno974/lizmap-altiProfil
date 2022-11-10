@@ -38,8 +38,8 @@ services:
       - pgsql
   map:
     image: 3liz/qgis-map-server:${QGIS_VERSION_TAG}
-    command: qgisserver -c /srv/etc/py-qgis-server.conf
     environment:
+      QGSRV_API_ENABLED_LIZMAP: 'yes'
       QGSRV_CACHE_ROOTDIR: /srv/projects
       QGSRV_CACHE_SIZE: '20'
       QGSRV_LOGGING_LEVEL: DEBUG
