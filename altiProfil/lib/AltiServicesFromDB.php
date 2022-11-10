@@ -227,4 +227,4 @@ Class AltiServicesFromDB {
         return json_encode($data);
     }
 }
-?>
+

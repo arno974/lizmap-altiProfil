@@ -157,4 +157,3 @@ Class AltiServicesFromIGN
         }
     }
 }
-?>

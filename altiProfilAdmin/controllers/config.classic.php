@@ -18,7 +18,6 @@ class configCtrl extends jController {
         'edit' => array( 'jacl2.right'=>'lizmap.admin.services.update'),
         'save' => array( 'jacl2.right'=>'lizmap.admin.services.update'),
         'validate' => array( 'jacl2.right'=>'lizmap.admin.services.update')
-
     );
 
     private $ini = null;
@@ -32,7 +31,7 @@ class configCtrl extends jController {
     /**
      * Display a summary of the information taken from the ~ configuration file.
      *
-     * @return Administration backend for the repositories.
+     * @return jResponseHtml Administration backend for the repositories.
      */
     function index() {
         $rep = $this->getResponse('html');
@@ -60,7 +59,7 @@ class configCtrl extends jController {
 
     /**
      * Modification of the configuration.
-     * @return Redirect to the form display action.
+     * @return jResponseRedirect Redirect to the form display action.
      */
     public function modify(){
 
@@ -84,7 +83,7 @@ class configCtrl extends jController {
 
     /**
      * Display the form to modify the config.
-     * @return Display the form.
+     * @return jResponseHtml Display the form.
      */
     public function edit(){
         $rep = $this->getResponse('html');
@@ -110,7 +109,7 @@ class configCtrl extends jController {
 
   /**
   * Save the data for the config.
-  * @return Redirect to the index.
+  * @return jResponseRedirect Redirect to the index.
   */
   function save(){
     $form = jForms::get('altiProfilAdmin~config');
@@ -162,7 +161,7 @@ class configCtrl extends jController {
 
   /**
   * Validate the data for the config : destroy form and redirect.
-  * @return Redirect to the index.
+  * @return jResponseRedirect Redirect to the index.
   */
   function validate(){
 

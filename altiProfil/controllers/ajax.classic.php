@@ -49,11 +49,10 @@ class ajaxCtrl extends jController
                 $altiProviderInstance = new \AltiProfil\AltiServicesFromDB($altiConfig, $repository, $project);
                 $rep->data = $altiProviderInstance->getAlti($lon, $lat);
                 return $rep;
-            }else{
-                return $this->errorMsg("Wrong or No Alti Provider defined (config $altiProvider)");
             }
+            return $this->errorMsg("Wrong or No Alti Provider defined (config $altiProvider)");
         }
-        // FIXME RETURN
+        return $this->errorMsg("Wrong lon/lat values");
     }
 
     /**
@@ -82,13 +81,10 @@ class ajaxCtrl extends jController
                 $altiProviderInstance = new \AltiProfil\AltiServicesFromDB($altiConfig, $repository, $project);
                 $rep->data = $altiProviderInstance->getProfil($p1Lon, $p1Lat, $p2Lon, $p2Lat);
                 return $rep;
-            }else{
-                return $this->errorMsg("Wrong or No Alti Provider defined (config $altiProvider)");
             }
+            return $this->errorMsg("Wrong or No Alti Provider defined (config $altiProvider)");
         }
-        else {
-            return null;
-        }
+        return $this->errorMsg("Wrong lon/lat values");
     }
 }
-?>
+
