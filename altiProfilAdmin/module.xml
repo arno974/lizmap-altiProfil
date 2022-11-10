@@ -5,13 +5,12 @@
         <label lang="en_US">altiProfilAdmin</label>
         <description lang="en_US" />
         <license URL="https://spdx.org/licenses/GPL-3.0-or-later.html">GNU GPLv3</license>
-        <copyright>2020 3liz</copyright>
+        <copyright>2020-2022 3liz</copyright>
         <creator name="3liz" email="info@3liz.com" active="true"/>
         <!--<contributor name="hisname" email="hisemail@yoursite.undefined" active="true" since="" role=""/>-->
         <homepageURL>https://3liz.com</homepageURL>
     </info>
     <dependencies>
-        <jelix minversion="1.6.2" maxversion="1.6.*"/>
-        <module name="lizmap" />
+        <module name="lizmap" minversion="3.4.0" maxversion="3.6.*"/>
     </dependencies>
 </module>

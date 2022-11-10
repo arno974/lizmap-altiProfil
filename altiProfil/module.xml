@@ -10,7 +10,6 @@
         <homepageURL>http://geolab.re</homepageURL>
     </info>
     <dependencies>
-        <jelix minversion="1.6.27-pre" maxversion="1.6.*"/>
-        <module name="lizmap" />
+        <module name="lizmap" minversion="3.5.0" maxversion="3.6.*" />
     </dependencies>
 </module>

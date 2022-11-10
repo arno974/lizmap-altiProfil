@@ -28,14 +28,23 @@ cp -n lizmap/my-packages/composer.json.dist lizmap/my-packages/composer.json
 composer require --working-dir=lizmap/my-packages "arno974/lizmap-altiprofil"
 ```
 
-* Ensuite lancez les scripts d'installation de Lizmap :
+* Ensuite allez dans `lizmap/install/` et executez les scripts suivants :
+
+Si vous utilisez Lizmap 3.6 ou plus, lancez d'abord :
 
 ```bash
-php lizmap/install/installer.php
-./lizmap/install/clean_vartmp.sh
-./lizmap/install/set_rights.sh
+php configurator.php altiProfil
+php configurator.php altiProfilAdmin
 ```
-`
+
+* Ensuite, quelque soit la version de Lizmap, lancez les scripts d'installation :
+
+```bash
+php installer.php
+./clean_vartmp.sh
+./set_rights.sh
+```
+
 Passez à la section sur la configuration.
 
 ### Installation manuelle dans lizmap 3.3 ou 3.4 sans Composer
@@ -53,7 +62,6 @@ Ajouter dans le fichier `lizmap/var/config/localconfig.ini.php`, sous la section
 
 altiProfil.access=2
 altiProfilAdmin.access=2
-
 ```
 
 * Puis lancer l'installation des modules via

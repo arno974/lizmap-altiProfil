@@ -83,7 +83,7 @@ class altiProfilListener extends jEventListener{
 
             // Add Dataviz if not already available
             if ( !$this->getDatavizStatus($event) ) {
-                $bp = jApp::config()->urlengine['basePath'];
+                $bp = jApp::urlBasePath();
                 if (file_exists(jApp::wwwPath('js/dataviz/plotly-latest.min.js'))) {
                     $js[] = $bp.'js/dataviz/plotly-latest.min.js';
                     $js[] = $bp.'js/dataviz/dataviz.js';
