@@ -117,7 +117,8 @@ Il est possible que l'intégration ne soit pas optimale, mais cela devrait tout 
 
 ## Cas de l'utilisation à partir d'une base de données
 
-Pour utiliser ce module en vous connectant à votre base de données, vous devrez disposer d'une base avec une table raster de type MNT. Vous devrez également ajouter au fichier `profiles.ini.php` (situé dans `lizmap/var/config`) le bloc ci-dessous :
+Pour utiliser ce module en vous connectant à votre base de données, vous devrez disposer d'une base avec une table raster de type MNT. 
+Vous devrez également ajouter au fichier `profiles.ini.php` (situé dans `lizmap/var/config`) le bloc ci-dessous :
 
 ```ini
 [jdb:altiProfil]
