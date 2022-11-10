@@ -12,4 +12,7 @@
     <dependencies>
         <module name="lizmap" minversion="3.5.0" maxversion="3.6.*" />
     </dependencies>
+    <autoload>
+        <namespacePathMap name="AltiProfil" dir="lib/"/>
+    </autoload>
 </module>

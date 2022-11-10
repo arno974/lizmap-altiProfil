@@ -1,35 +1,34 @@
 <?php
 
-Class getAltiServicesFromIGN {
-
-    protected $IgnServiceKey = "";
-    protected $IgnServiceUrl = "";
-    protected $Altisource = "";
+Class getAltiServicesFromIGN
+{
+    /**
+     * @var \AltiProfil\AltiConfig
+     */
+    protected $config;
 
     /**
      * Get config parameters
     **/
-    function __construct(){
-        $localConfig = jApp::configPath('altiProfil.ini.php');
-        $localConfig = new jIniFileModifier($localConfig);
-        $this->IgnServiceKey = $localConfig->getValue('ignServiceKey', 'altiProfil');
-        $this->IgnServiceUrl = $localConfig->getValue('ignServiceUrl', 'altiProfil');
-        $this->Altisource = $localConfig->getValue('altisource', 'altiProfil');
+    function __construct(\AltiProfil\AltiConfig $config)
+    {
+        $this->config = $config;
     }
 
     /**
      * Get alti from IGN API
     **/
-    public function getAlti($lon, $lat){
-        $APIRestElev = "/alti/rest/elevation.json?";
+    public function getAlti($lon, $lat)
+    {
+        $APIRestElev = "/alti/rest/elevation.json";
 
         $data = array(
             'lon' => $lon,
             'lat' => $lat
         );
-        $params = http_build_query($data, '', '&');
 
-        $urlAltiIGN = $this->IgnServiceUrl.$this->IgnServiceKey.$APIRestElev.$params;
+        $urlAltiIGN = $this->config->getIgnServiceUrl($APIRestElev, $data);
+
         list($data, $mime, $code) = lizmapProxy::getRemoteData($urlAltiIGN);
         $code = 200;
         if ($code == 200) {
@@ -48,15 +47,17 @@ Class getAltiServicesFromIGN {
     /**
      * Get profil from IGN API
     **/
-    public function getProfil($p1Lon, $p1Lat, $p2Lon, $p2Lat, $sampling){
-        $APIRestProfil = "/alti/rest/elevationLine.json?";
+    public function getProfil($p1Lon, $p1Lat, $p2Lon, $p2Lat, $sampling)
+    {
+        $APIRestProfil = "/alti/rest/elevationLine.json";
         $data = array(
             'lon' => $p1Lon."|".$p2Lon,
             'lat' => $p1Lat."|".$p2Lat,
             'sampling' => 10
         );
-        $params = http_build_query($data, '', '&');
-        $fullURL = $this->IgnServiceUrl.$this->IgnServiceKey.$APIRestProfil.$params;
+
+        $fullURL = $this->config->getIgnServiceUrl($APIRestProfil, $data);
+
         list($data, $mime, $code) = lizmapProxy::getRemoteData($fullURL);
 
         /* FOR TESTING
@@ -144,7 +145,7 @@ Class getAltiServicesFromIGN {
                 "y" => $y,
                 "customdata" => $customdata,
                 "srid" => 4326,
-                "altisource" => $this->Altisource,
+                "altisource" => $this->config->getAltisource(),
                 "source" => 'IGN'
              ] ];
             return json_encode($data);

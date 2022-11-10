@@ -9,16 +9,19 @@ Class GetAltiServicesFromDB {
     protected $repository = Null;
     protected $project = Null;
 
-    function __construct($repository, $project) {
+    /**
+     * @var \AltiProfil\AltiConfig
+     */
+    protected $config;
 
-        // Get global config
-        $altiProfilConfigFile = jApp::configPath('altiProfil.ini.php');
-        $localConfig = new jIniFileModifier($altiProfilConfigFile);
-        $this->Srid = $localConfig->getValue('srid', 'altiProfil');
-        $this->AltiProfileTable = $localConfig->getValue('altiProfileTable', 'altiProfil');
-        $this->Altisource = $localConfig->getValue('altisource', 'altiProfil');
-        $this->profilUnit = $localConfig->getValue('profilUnit', 'altiProfil');
-        $this->AltiResolution = $localConfig->getValue('altiresolution', 'altiProfil');
+    function __construct(\AltiProfil\AltiConfig $altiConfig, $repository, $project)
+    {
+        $this->config = $altiConfig;
+        $this->Srid = $altiConfig->getSrid();
+        $this->AltiProfileTable = $altiConfig->getAltiProfileTable();
+        $this->Altisource = $altiConfig->getAltisource();
+        $this->profilUnit = $altiConfig->getProfilUnit();
+        $this->AltiResolution = $altiConfig->getAltiResolution();
 
         // Get project config: override table and source per project
         $this->repository = $repository;

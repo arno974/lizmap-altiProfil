@@ -1,17 +1,7 @@
 <?php
 
-class ajaxCtrl extends jController {
-
-    /**
-     * Get config parameters
-    **/
-    function getModuleConfig(){
-        $localConfig = jApp::configPath('altiProfil.ini.php');
-        $localConfig = new jIniFileModifier($localConfig);
-        $altiProvider = $localConfig->getValue('altiProfileProvider', 'altiProfil');
-        return $altiProvider;
-    }
-
+class ajaxCtrl extends jController
+{
     /**
      * Log Error Message
     **/
@@ -44,26 +34,28 @@ class ajaxCtrl extends jController {
     public function getAlti(){
         $rep = $this->getResponse('json');
 
-        $altiProvider = $this->getModuleConfig();
+        $altiConfig = new \AltiProfil\AltiConfig();
+        $altiProvider = $altiConfig->getProvider();
         $lon = $this->param('lon');
         $lat = $this->param('lat');
         if ($this->checkParams($lon, $lat)){
             if($altiProvider == 'ign' ){
                 jClasses::inc('altiProfil~altiServicesFromIGN');
-                $altiProviderInstance = new GetAltiServicesFromIGN();
+                $altiProviderInstance = new GetAltiServicesFromIGN($altiConfig);
                 $rep->data = $altiProviderInstance->getAlti($lon, $lat);
                 return $rep;
             }elseif ( $altiProvider == 'database' ) {
                 jClasses::inc('altiProfil~altiServicesFromDB');
                 $repository = $this->param('repository');
                 $project = $this->param('project');
-                $altiProviderInstance = new GetAltiServicesFromDB($repository, $project);
+                $altiProviderInstance = new GetAltiServicesFromDB($altiConfig, $repository, $project);
                 $rep->data = $altiProviderInstance->getAlti($lon, $lat);
                 return $rep;
             }else{
-                return $this->errorMsg("Wrong or No Alti Provider defined (config $this->AltiProvider)");
+                return $this->errorMsg("Wrong or No Alti Provider defined (config $altiProvider)");
             }
         }
+        // FIXME RETURN
     }
 
     /**
@@ -72,7 +64,8 @@ class ajaxCtrl extends jController {
     public function getProfil(){
         $rep = $this->getResponse('json');
 
-        $altiProvider = $this->getModuleConfig();
+        $altiConfig = new \AltiProfil\AltiConfig();
+        $altiProvider = $altiConfig->getProvider();
 
         $p1Lon = $this->param('p1Lon');
         $p1Lat = $this->param('p1Lat');
@@ -83,18 +76,18 @@ class ajaxCtrl extends jController {
         if ( ($this->checkParams($p1Lon, $p1Lat)) and ($this->checkParams($p2Lon, $p2Lat)) ){
             if($altiProvider == 'ign' ){
                 jClasses::inc('altiProfil~altiServicesFromIGN');
-                $altiProviderInstance = new GetAltiServicesFromIGN();
+                $altiProviderInstance = new GetAltiServicesFromIGN($altiConfig);
                 $rep->data = $altiProviderInstance->getProfil($p1Lon, $p1Lat, $p2Lon, $p2Lat, $sampling);
                 return $rep;
             }elseif ( $altiProvider == 'database' ) {
                 jClasses::inc('altiProfil~altiServicesFromDB');
                 $repository = $this->param('repository');
                 $project = $this->param('project');
-                $altiProviderInstance = new GetAltiServicesFromDB($repository, $project);
+                $altiProviderInstance = new GetAltiServicesFromDB($altiConfig, $repository, $project);
                 $rep->data = $altiProviderInstance->getProfil($p1Lon, $p1Lat, $p2Lon, $p2Lat);
                 return $rep;
             }else{
-                return $this->errorMsg("Wrong or No Alti Provider defined (config $this->AltiProvider)");
+                return $this->errorMsg("Wrong or No Alti Provider defined (config $altiProvider)");
             }
         }
         else {
