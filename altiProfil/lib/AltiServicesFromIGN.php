@@ -1,6 +1,7 @@
 <?php
+namespace AltiProfil;
 
-Class getAltiServicesFromIGN
+Class AltiServicesFromIGN
 {
     /**
      * @var \AltiProfil\AltiConfig

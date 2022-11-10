@@ -40,15 +40,13 @@ class ajaxCtrl extends jController
         $lat = $this->param('lat');
         if ($this->checkParams($lon, $lat)){
             if($altiProvider == 'ign' ){
-                jClasses::inc('altiProfil~altiServicesFromIGN');
-                $altiProviderInstance = new GetAltiServicesFromIGN($altiConfig);
+                $altiProviderInstance = new \AltiProfil\AltiServicesFromIGN($altiConfig);
                 $rep->data = $altiProviderInstance->getAlti($lon, $lat);
                 return $rep;
             }elseif ( $altiProvider == 'database' ) {
-                jClasses::inc('altiProfil~altiServicesFromDB');
                 $repository = $this->param('repository');
                 $project = $this->param('project');
-                $altiProviderInstance = new GetAltiServicesFromDB($altiConfig, $repository, $project);
+                $altiProviderInstance = new \AltiProfil\AltiServicesFromDB($altiConfig, $repository, $project);
                 $rep->data = $altiProviderInstance->getAlti($lon, $lat);
                 return $rep;
             }else{
@@ -75,15 +73,13 @@ class ajaxCtrl extends jController
 
         if ( ($this->checkParams($p1Lon, $p1Lat)) and ($this->checkParams($p2Lon, $p2Lat)) ){
             if($altiProvider == 'ign' ){
-                jClasses::inc('altiProfil~altiServicesFromIGN');
-                $altiProviderInstance = new GetAltiServicesFromIGN($altiConfig);
+                $altiProviderInstance = new \AltiProfil\AltiServicesFromIGN($altiConfig);
                 $rep->data = $altiProviderInstance->getProfil($p1Lon, $p1Lat, $p2Lon, $p2Lat, $sampling);
                 return $rep;
             }elseif ( $altiProvider == 'database' ) {
-                jClasses::inc('altiProfil~altiServicesFromDB');
                 $repository = $this->param('repository');
                 $project = $this->param('project');
-                $altiProviderInstance = new GetAltiServicesFromDB($altiConfig, $repository, $project);
+                $altiProviderInstance = new \AltiProfil\AltiServicesFromDB($altiConfig, $repository, $project);
                 $rep->data = $altiProviderInstance->getProfil($p1Lon, $p1Lat, $p2Lon, $p2Lat);
                 return $rep;
             }else{

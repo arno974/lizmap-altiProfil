@@ -1,6 +1,7 @@
 <?php
+namespace AltiProfil;
 
-Class GetAltiServicesFromDB {
+Class AltiServicesFromDB {
 
     protected $Srid = "";
     protected $AltiProfileTable = "";
