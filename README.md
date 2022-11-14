@@ -1,43 +1,41 @@
-# lizmap-altiProfil
+# AltiProfil for Lizmap
 
 [![Packagist](https://img.shields.io/packagist/v/arno974/lizmap-altiprofil)](https://packagist.org/packages/arno974/lizmap-altiprofil)
 
 ## Description
 
-Ce Module Lizmap permet la création de profils topographiques à partir du web 
-service de l'IGN ou d'une base postgis disposant d'une table raster avec un MNT.
+This Lizmap module allows you to create **topographic profile**, either from a raster table stored in **PostGIS** or an online
+API such as **French IGN** data provider.
 
-![](https://github.com/arno974/lizmap-altiProfil/blob/master/altiProfil.jpeg?raw=true)
-
+![main interface](altiProfil.jpeg)
 
 ## Installation
 
-Depuis la version 0.2.2 du module, il est souhaitable de l'installer avec
-[Composer](https://getcomposer.org), le système de paquet pour PHP. 
-Si vous ne pouvez pas, ou si vous utilisez lizmap 3.3 ou inférieur, passez à la 
-section sur l'installation manuelle.
+Since version 0.2.2, you should install it with [Composer](https://getcomposer.org).
+If you can't or if you are not using Lizmap 3.3 or lower, you should follow the **manual installation** part.
 
-### Installation automatique avec Composer et lizmap 3.4 ou plus
+### With Composer
 
-* dans `lizmap/my-packages`, créer le fichier `composer.json` s'il n'existe pas
-  déjà, en copiant le fichier `composer.json.dist`, qui s'y trouve. Puis lancez
-  Composer pour installer les fichiers de AltiProfil.
+**Lizmap Web Client 3.4 or higher**
+
+* In `lizmap/my-packages`, create the file `composer.json` if it doesn't exist by copying
+  the file `composer.json.dist`. Then launch Composer by specifying the module name to install.
 
 ```bash
 cp -n lizmap/my-packages/composer.json.dist lizmap/my-packages/composer.json
 composer require --working-dir=lizmap/my-packages "arno974/lizmap-altiprofil"
 ```
 
-* Ensuite allez dans `lizmap/install/` et executez les scripts suivants :
+* Then go in `lizmap/install/` and execute some scripts :
 
-Si vous utilisez Lizmap 3.6 ou plus, lancez d'abord :
+If you are using Lizmap Web Client 3.6 and higher, launch first :
 
 ```bash
 php configurator.php altiProfil
 php configurator.php altiProfilAdmin
 ```
 
-* Ensuite, quelque soit la version de Lizmap, lancez les scripts d'installation :
+* Then, **whatever** the version of Lizmap, launch installation scripts :
 
 ```bash
 php installer.php
@@ -45,17 +43,19 @@ php installer.php
 ./set_rights.sh
 ```
 
-Passez à la section sur la configuration.
+Go to the configuration part.
 
-### Installation manuelle dans lizmap 3.3 ou 3.4 sans Composer
+### Manual installation
 
-* Téléchargez l'archive zip à partir de la [page release de github](https://github.com/arno974/lizmap-altiProfil/releases).
-* Désarchivez le zip et copiez les répertoires `AltiProfil`, et `AltiProfilAdmin`
-  dans le dossier `lizmap/lizmap-module/`
-* Il faut ensuite activer les modules dans lizmap, en éditant des fichiers
-  de configuration situés dans  `lizmap/var/config`.
+**Lizmap Web Client 3.3 ou 3.4 without Composer**
 
-Ajouter dans le fichier `lizmap/var/config/localconfig.ini.php`, sous la section `[module]`, la référence à ces 2 modules. Ne pas supprimer les références aux autres modules pour cette section.
+* Download the ZIP from the [GitHub release page](https://github.com/arno974/lizmap-altiProfil/releases).
+* Extract the zip and copy directories `AltiProfil`, and `AltiProfilAdmin`
+  in folder `lizmap/lizmap-module/`
+* Modules need to be enabled in Lizmap by editing the configuration file `lizmap/var/config`.
+
+Add in the file `lizmap/var/config/localconfig.ini.php`, in the `[module]` section, the reference to these 2 modules.
+Do not remove references to other modules in this section.
 
 ```ini
 [modules]
@@ -64,7 +64,7 @@ altiProfil.access=2
 altiProfilAdmin.access=2
 ```
 
-* Puis lancer l'installation des modules via
+* Launch the installation of the modules with
 
 ```bash
 php lizmap/install/installer.php
@@ -74,66 +74,84 @@ lizmap/install/set_rights.sh
 
 ## Configuration
 
+It's necessary to go in the administration panel of Lizmap Web Client to set up the module. 
 
-Il est ensuite nécessaire de se rendre à la page d'administration de Lizmap Web Client, et de configurer le module. 
+![Administration panel](altiProfilAdmin.png)
 
-![](https://github.com/arno974/lizmap-altiProfil/blob/master/altiProfilAdmin.png?raw=true)
-
-Cette configuration crée ou modifie le fichier `lizmap/var/config/altiProfil.ini.php`, qui contiendra par exemple:
+This configuration will create or edit the file `lizmap/var/config/altiProfil.ini.php`, which might contain for instance :
 
 ```ini
 [altiProfil]
-altisource= Source des données
+altisource=Source of data
 
-;si cas database
+;if database
 altiProfileProvider=database
 altiProfileTable=dem_table
 srid=3957
-; profilUnit = PERCENT or DEGREES - choix de l'unité de calcul du profil
+; profilUnit = PERCENT or DEGREES - unit for the profil
 profilUnit= PERCENT
 ; dock panel = dock or minidock or rightdock
 dock=dock
-altiresolution= résolution du MNT
+altiresolution=DEM resolution
 
-;si cas IGN
+;if IGN French data provider
 ;altiProfileProvider= ign
-ignServiceKey=votre clé IGN
+ignServiceKey=votre clé IGN / your IGN key
 ignServiceUrl=https://wxs.ign.fr/
 
 ```
 
-Vous pouvez ainsi définir et configurer la source de vos données. Si vous souhaitez vous connecter au web service de l'IGN (altiProfileProvider=ign) ou a des données provenant de votre base (altiProfileProvider=database). En fonction de la source de données des options complémentaires doivent être précisées.
+You can specify your data source.
+Depending on your datasource, some extra configuration might be needed.
 
-## Surcharge de la configuration par projet
+### Database
 
-Pour chaque projet QGIS publié dans Lizmap, par exemple `my_project.qgs` vous pouvez ajouter un fichier avec une extension en plus `.alti` à la fin du nom, ce qui donne par exemple `my_project.qgs.alti`. Ce fichier permet de surcharger, s'il est présent, certains paramètres.
+```ini
+altiProfileProvider=database
+```
 
-Par exemple
+### IGN French provider
+
+```ini
+altiProfileProvider=ign
+```
+
+## Override the configuration for a single project
+
+For every project published in Lizmap, for instance `my_project.qgs`, you can add a new file with extension `.alti` at the end of the file.
+In our example, it would be `my_project.qgs.alti`. 
+
+This file allows you to override some settings.
+
+For instance
 
 ```ini
 [altiProfil]
-altisource="SRTM Montpellier high-resolution"
-altiProfileTable=srtm_montpellier_high_resolution
+altisource="DEM Paris high-resolution"
+altiProfileTable=srtm_paris_high_resolution
 srid=3857
 ```
 
-## Cas de l'utilisation à partir de l'API IGN
+## Use-case from a database
 
-En raison de l'absence de continuité de service de l'offre Pro IGN, il n'a pas été possible de tester complément l'intégration de l'API. Les tests effectués ont été réalisés sur la base des exemples donnés dans la documentation.
-
-Il est possible que l'intégration ne soit pas optimale, mais cela devrait tout de même être fonctionnel.
-
-## Cas de l'utilisation à partir d'une base de données
-
-Pour utiliser ce module en vous connectant à votre base de données, vous devrez disposer d'une base avec une table raster de type MNT. 
-Vous devrez également ajouter au fichier `profiles.ini.php` (situé dans `lizmap/var/config`) le bloc ci-dessous :
+To use this module with a database, you should connect to a raster table having a DEM.
+You need to add in the file `profiles.ini.php` (located in`lizmap/var/config`) the given block :
 
 ```ini
 [jdb:altiProfil]
 driver=pgsql
-database=nom de la base
-host=localhost (ou URL)
-user=nom de l'utilisateur de la base
-password=mot de passe de l'utilisateur
-search_path=si la table se trouve dans un schéma particulier sinon mettez simplement public
+database=name of database
+host=localhost (or URL)
+user=the login for the database
+password=password for the database
+search_path=if the table is in a specific schema, otherwise, let "public"
 ```
+
+## Cas de l'utilisation à partir de l'API IGN
+
+_French only 🇫🇷_
+
+En raison de l'absence de continuité de service de l'offre Pro IGN, il n'a pas été possible de tester complément l'intégration de l'API.
+Les tests effectués ont été réalisés sur la base des exemples donnés dans la documentation.
+
+Il est possible que l'intégration ne soit pas optimale, mais cela devrait tout de même être fonctionnel.
