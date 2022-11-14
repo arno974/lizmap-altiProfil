@@ -2,6 +2,18 @@
  
 ## Unreleased
 
+### Added
+
+* Compatibility with Lizmap Web Client 3.6
+
+### Changed
+
+* Some code refactoring
+
+### Tests
+
+* Add a docker stack for testing the module
+
 ## 0.2.3 - 2022-03-11
 
 * Fix IGN service Provider and set it as default provider

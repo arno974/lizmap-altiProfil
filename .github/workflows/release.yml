@@ -1,0 +1,24 @@
+name: Release 🚀
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  release:
+    name: Create Release
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - uses: actions/checkout@v3
+
+      - name: Changelog
+        id: changelog
+        uses: 3liz/changelog-release@0.2.0
+
+      - name: Create release on GitHub
+        uses: ncipollo/release-action@v1.11.1
+        with:
+          body: ${{ steps.changelog.outputs.markdown }}
