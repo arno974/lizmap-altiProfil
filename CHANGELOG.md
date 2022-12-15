@@ -4,6 +4,13 @@
 
 ### Added
 
+### Changed
+
+
+## 0.3.0 - 2022-12-15
+
+### Added
+
 * Compatibility with Lizmap Web Client 3.6
 
 ### Changed

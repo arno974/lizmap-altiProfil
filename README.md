@@ -11,12 +11,11 @@ API such as **French IGN** data provider.
 
 ## Installation
 
-Since version 0.2.2, you should install it with [Composer](https://getcomposer.org).
-If you can't or if you are not using Lizmap 3.3 or lower, you should follow the **manual installation** part.
+This module is compatible with Lizmap Web Client 3.4 and higher.
+You should install it with [Composer](https://getcomposer.org).
+If you can't, you must follow the **manual installation** part.
 
 ### With Composer
-
-**Lizmap Web Client 3.4 or higher**
 
 * In `lizmap/my-packages`, create the file `composer.json` if it doesn't exist by copying
   the file `composer.json.dist`. Then launch Composer by specifying the module name to install.
@@ -47,15 +46,14 @@ Go to the configuration part.
 
 ### Manual installation
 
-**Lizmap Web Client 3.3 ou 3.4 without Composer**
-
 * Download the ZIP from the [GitHub release page](https://github.com/arno974/lizmap-altiProfil/releases).
 * Extract the zip and copy directories `AltiProfil`, and `AltiProfilAdmin`
   in folder `lizmap/lizmap-module/`
 * Modules need to be enabled in Lizmap by editing the configuration file `lizmap/var/config`.
 
-Add in the file `lizmap/var/config/localconfig.ini.php`, in the `[module]` section, the reference to these 2 modules.
-Do not remove references to other modules in this section.
+
+For Lizmap 3.4 or Lizmap 3.5, add in the file `lizmap/var/config/localconfig.ini.php`, in the `[module]` section, 
+the reference to these 2 modules. Do not remove references to other modules in this section.
 
 ```ini
 [modules]
@@ -64,7 +62,15 @@ altiProfil.access=2
 altiProfilAdmin.access=2
 ```
 
-* Launch the installation of the modules with
+For Lizmap 3.6 or higher, don't modify `lizmap/var/config/localconfig.ini.php`, launch this command instead:
+
+```
+php lizmap/install/configurator.php altiProfil
+php lizmap/install/configurator.php altiProfilAdmin
+```
+
+
+* Then for any version of Lizmap, launch the installation of the modules with
 
 ```bash
 php lizmap/install/installer.php

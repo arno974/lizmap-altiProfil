@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module xmlns="http://jelix.org/ns/module/1.0">
     <info id="altiProfil" name="altiProfil" createdate="2020-03-12">
-        <version date="2022-03-11">0.2.3</version>
+        <version date="2022-12-15">0.3.0</version>
         <label lang="en_US">altiProfil</label>
         <description lang="en_US" />
         <license URL="https://spdx.org/licenses/GPL-3.0-or-later.html">GNU GPLv3</license>
@@ -10,7 +10,7 @@
         <homepageURL>http://geolab.re</homepageURL>
     </info>
     <dependencies>
-        <module name="lizmap" minversion="3.5.0" maxversion="3.6.*" />
+        <module name="lizmap" minversion="3.4.0" maxversion="3.6.*" />
     </dependencies>
     <autoload>
         <namespacePathMap name="AltiProfil" dir="lib/"/>
