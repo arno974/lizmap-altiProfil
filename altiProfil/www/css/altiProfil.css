@@ -1,14 +1,14 @@
 #mapmenu li.altiProfil #button-altiProfil span.icon{
-  background-image: url(getfile?targetmodule=altiProfil&file=img/noun_altitude.png);
+  background-image: url(img/noun_altitude.png);
 }
 
 #mapmenu li.altiProfil.active #button-altiProfil span.icon{
-  background-image: url(getfile?targetmodule=altiProfil&file=img/noun_altitude_click.png);
+  background-image: url(img/noun_altitude_click.png);
   background-position: 0 0;
 }
 
 #dock-content .altiProfil h3 .icon{
-    background-image: url(getfile?targetmodule=altiProfil&file=img/noun_altitude.png);
+    background-image: url(img/noun_altitude.png);
     background-position: 0 0;
 }
 
@@ -49,6 +49,3 @@
       transform: rotate(360deg);
     }
 }
-
-
-

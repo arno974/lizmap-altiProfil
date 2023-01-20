@@ -2,10 +2,9 @@
  
 ## Unreleased
 
-### Added
+### Fixed
 
-### Changed
-
+* Icons were not displayed on Lizmap Web Client 3.6
 
 ## 0.3.0 - 2022-12-15
 
