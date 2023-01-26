@@ -20,6 +20,6 @@ class altiProfilModuleInstaller extends jInstallerModule {
         if (!file_exists($altiProfilConfigPath)) {
             $this->copyFile('config/altiProfil.ini.php.dist', $altiProfilConfigPath);
         }
-
+        $this->copyDirectoryContent('../www/', jApp::wwwPath('altiprofil/'));
     }
 }
