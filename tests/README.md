@@ -7,8 +7,11 @@ Steps:
     # Clean previous versions (optional)
     make clean
 
-    # Run the different services
+    # Run the different services (default is Lizmap 3.6)
     make run
+    
+    # or for older lizmap
+    make run LIZMAP_VERSION_TAG=3.5
     ```
 
 - If you run Lizmap 3.6+, install the altiProfil modules with
