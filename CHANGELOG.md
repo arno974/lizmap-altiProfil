@@ -6,6 +6,12 @@
 
 ### Changed
 
+## 0.3.1 - 2023-02-27
+
+### Changed
+
+* Fix the display of the menu icon in Lizmap 3.6
+* Increase required lizmap version to 3.7
 
 ## 0.3.0 - 2022-12-15
 
