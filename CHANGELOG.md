@@ -6,6 +6,12 @@
 
 ### Changed
 
+## 0.3.2 - 2023-02-27
+
+### Changed
+
+* Fix: altiprofil did not respond, because of some syntax issues with some class names.
+
 ## 0.3.1 - 2023-02-27
 
 ### Changed
