@@ -27,7 +27,7 @@ Class AltiServicesFromDB {
         // Get project config: override table and source per project
         $this->repository = $repository;
         $this->project = $project;
-        $p = lizmap::getProject($repository.'~'.$project);
+        $p = \lizmap::getProject($repository.'~'.$project);
         if( $p ){
             $alti_config_file = $p->getQgisPath() . '.alti';
             if (file_exists($alti_config_file)) {
@@ -77,9 +77,9 @@ Class AltiServicesFromDB {
             $lat,
             $this->Srid
         );
-        $cnx = jDb::getConnection( 'altiProfil' );
+        $cnx = \jDb::getConnection( 'altiProfil' );
         $qResult = $cnx->query( $sql );
-        $result = array("elevations"=>[$qResult->fetch(PDO::FETCH_ASSOC)]);
+        $result = array("elevations"=>[$qResult->fetch(\PDO::FETCH_ASSOC)]);
         return json_encode($result);
     }
 
@@ -163,7 +163,7 @@ Class AltiServicesFromDB {
             $this->profilUnit,
             $this->AltiResolution,
         );
-        $cnx = jDb::getConnection('altiProfil');
+        $cnx = \jDb::getConnection('altiProfil');
         $qResult = $cnx->query($sql);
         $x = array();
         $y = array();
@@ -209,10 +209,10 @@ Class AltiServicesFromDB {
             $p2Lon, $p2Lat,
             $this->profilUnit
         );
-        $cnx = jDb::getConnection('altiProfil');
+        $cnx = \jDb::getConnection('altiProfil');
         $qResult = $cnx->query($sql);
         $slope = json_encode(
-                    $qResult->fetch(PDO::FETCH_ASSOC)
+                    $qResult->fetch(\PDO::FETCH_ASSOC)
                 );
         $data = [ [
             "x" => $x,

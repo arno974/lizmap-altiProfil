@@ -30,7 +30,7 @@ Class AltiServicesFromIGN
 
         $urlAltiIGN = $this->config->getIgnServiceUrl($APIRestElev, $data);
 
-        list($data, $mime, $code) = lizmapProxy::getRemoteData($urlAltiIGN);
+        list($data, $mime, $code) = \lizmapProxy::getRemoteData($urlAltiIGN);
         $code = 200;
         if ($code == 200) {
             //DATA SHOULD BE LIKE '{"elevations":[{"x":55.38025625,"y":-21.14050849,"z":2154.75,"acc":2.5}]}'
@@ -40,7 +40,7 @@ Class AltiServicesFromIGN
             return $data;
         }else{
             $errorMsg = "AltiProfil IGN wrong request";
-            jLog::log($errorMsg);
+            \jLog::log($errorMsg);
             return '{"error msg": "'.$data.'" }';
         }
     }
@@ -59,7 +59,7 @@ Class AltiServicesFromIGN
 
         $fullURL = $this->config->getIgnServiceUrl($APIRestProfil, $data);
 
-        list($data, $mime, $code) = lizmapProxy::getRemoteData($fullURL);
+        list($data, $mime, $code) = \lizmapProxy::getRemoteData($fullURL);
 
         /* FOR TESTING
         $data = '{
@@ -152,7 +152,7 @@ Class AltiServicesFromIGN
             return json_encode($data);
         }else{
             $errorMsg = "AltiProfil IGN wrong request";
-            jLog::log($errorMsg);
+            \jLog::log($errorMsg);
             return '{"error msg": "'.$data.'" }';
         }
     }
