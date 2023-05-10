@@ -7,6 +7,10 @@ class altiProfilModuleUpgrader extends jInstallerModule
 {
     public function install()
     {
-        $this->copyDirectoryContent('../www/', jApp::wwwPath('altiprofil/'));
+        // Copy CSS and JS assets
+        // We use overwrite to be sure the new versions of the JS files
+        // will be used
+        $overwrite = true;
+        $this->copyDirectoryContent('www', jApp::wwwPath(), $overwrite);
     }
 }
