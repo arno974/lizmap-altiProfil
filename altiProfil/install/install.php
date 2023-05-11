@@ -15,6 +15,5 @@ class altiProfilModuleInstaller extends \Jelix\Installer\Module\Installer
 {
     public function install(Jelix\Installer\Module\API\InstallHelpers $helpers)
     {
-
     }
 }

@@ -14,12 +14,11 @@
 class altiProfilModuleInstaller extends jInstallerModule {
 
     function install() {
-
         // Copy configuration file
         $altiProfilConfigPath = jApp::configPath('altiProfil.ini.php');
         if (!file_exists($altiProfilConfigPath)) {
             $this->copyFile('config/altiProfil.ini.php.dist', $altiProfilConfigPath);
         }
-        $this->copyDirectoryContent('../www/', jApp::wwwPath('altiprofil/'));
+        $this->copyDirectoryContent('www', jApp::wwwPath());
     }
 }
