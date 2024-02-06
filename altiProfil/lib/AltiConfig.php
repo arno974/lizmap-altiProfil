@@ -8,7 +8,11 @@ class AltiConfig
 
     function __construct()
     {
-        $altiProfilConfigFile = \jApp::configPath('altiProfil.ini.php');
+        if (method_exists('jApp', 'varConfigPath')) {
+            $altiProfilConfigFile = \jApp::varConfigPath('altiProfil.ini.php');
+        } else {
+            $altiProfilConfigFile = \jApp::configPath('altiProfil.ini.php');
+        }
         $defaultValues =  array(
             'altisource' => '',
             'altiProfileTable' => '',
