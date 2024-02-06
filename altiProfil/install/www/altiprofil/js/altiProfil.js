@@ -69,20 +69,20 @@ function resizePlot(id){
 }
 
 function getProfil(p1,p2){
+    var p1Point = new OpenLayers.LonLat(p1.x, p1.y);
+    var p2Point = new OpenLayers.LonLat(p2.x, p2.y);
     if(lizMap.map.projection.projCode != "EPSG:4326"){
         var fromProjection = new OpenLayers.Projection(lizMap.map.projection.projCode);
         var toProjection = new OpenLayers.Projection("EPSG:4326");
-        var p1ConvertedPoint = new OpenLayers.LonLat(p1.x, p1.y);
-        var p2ConvertedPoint = new OpenLayers.LonLat(p2.x, p2.y);
-        p1ConvertedPoint.transform(fromProjection, toProjection);
-        p2ConvertedPoint.transform(fromProjection, toProjection);
+        p1Point.transform(fromProjection, toProjection);
+        p2Point.transform(fromProjection, toProjection);
     }
 
     var qParams = {
-        'p1Lon': p1ConvertedPoint.lon,
-        'p1Lat': p1ConvertedPoint.lat,
-        'p2Lon': p2ConvertedPoint.lon,
-        'p2Lat': p2ConvertedPoint.lat,
+        'p1Lon': p1Point.lon,
+        'p1Lat': p1Point.lat,
+        'p2Lon': p2Point.lon,
+        'p2Lat': p2Point.lat,
         'srs': lizMap.map.projection.projCode,
         'repository': lizUrls.params.repository,
         'project': lizUrls.params.project,
