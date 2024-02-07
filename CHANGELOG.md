@@ -1,10 +1,26 @@
 # Changelog
- 
+
+<!--
+Format from https://keepachangelog.com/en/1.0.0/
+added, fixed, changed, removed, deprecated, security
+with some extra keywords : backend, tests, test, translation, funders, important
+-->
+
 ## Unreleased
 
 ### Added
 
 ### Changed
+
+## 0.4.0 - 2024-02-07
+
+### Added
+
+* Compatibility with Lizmap Web Client 3.7
+
+### Fixed
+
+* Fix a Javascript error if the map projection was in EPSG:4326
 
 ## 0.3.2 - 2023-02-27
 
