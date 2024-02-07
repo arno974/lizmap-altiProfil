@@ -9,6 +9,7 @@ class AltiConfig
     function __construct()
     {
         if (method_exists('jApp', 'varConfigPath')) {
+            // LWC >= 3.7
             $altiProfilConfigFile = \jApp::varConfigPath('altiProfil.ini.php');
         } else {
             $altiProfilConfigFile = \jApp::configPath('altiProfil.ini.php');
