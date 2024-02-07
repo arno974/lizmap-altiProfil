@@ -1,0 +1,17 @@
+variables:
+    FACTORY_PRODUCT_NAME: altiProfil
+    FACTORY_PACKAGE_TYPE: module
+
+stages:
+- release
+
+tickets:
+  stage: release
+  only:
+    - tags
+  image:
+    name: $REGISTRY_URI/infra/ci-tools:latest
+  script:
+    - create_ticket.py
+  tags:
+    - factory-plain
