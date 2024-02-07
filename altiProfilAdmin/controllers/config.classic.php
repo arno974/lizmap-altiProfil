@@ -24,8 +24,14 @@ class configCtrl extends jController {
 
     function __construct( $request ) {
         parent::__construct( $request );
-        $monfichier = jApp::configPath('altiProfil.ini.php');
-        $this->ini = new jIniFileModifier ($monfichier);
+        if (method_exists('jApp', 'varConfigPath')) {
+	    // LWC >= 3.6
+	    $monfichier = \jApp::varConfigPath('altiProfil.ini.php');
+            $this->ini = new \Jelix\IniFile\IniModifier($monfichier);
+        } else {
+	    $monfichier = \jApp::configPath('altiProfil.ini.php');
+            $this->ini = new jIniFileModifier($monfichier);
+        }
     }
 
     /**
