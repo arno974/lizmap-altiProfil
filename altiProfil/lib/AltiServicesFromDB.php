@@ -150,7 +150,7 @@ Class AltiServicesFromDB {
                     SELECT ST_MakeLine(geom)as geom, MAX(resolution) as resolution FROM points3d
                 ),
                 xz AS(
-                    SELECT dp.geom as geom, dp.path[1] as pt_index, ST_distance(origin, dp.geom) as dist, resolution
+                    SELECT (dp).geom as geom, (dp).path[1] as pt_index, ST_distance(origin, (dp).geom) as dist, resolution
                     FROM (
                        SELECT ST_DumpPoints(geom) AS dp,
                        ST_StartPoint(geom) AS origin, resolution
