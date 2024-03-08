@@ -9,11 +9,20 @@ Class AltiServicesFromIGN
     protected $config;
 
     /**
+     * the resource id as defined by IGN geoplateforme
+     * https://data.geopf.fr/altimetrie/resources
+     * mandatory for each request
+     *
+     * @var string
+     */
+    private string $resource_id;
+    /**
      * Get config parameters
     **/
     function __construct(\AltiProfil\AltiConfig $config)
     {
         $this->config = $config;
+        $this->resource_id = 'ign_rge_alti_wld';
     }
 
     /**
@@ -25,7 +34,8 @@ Class AltiServicesFromIGN
 
         $data = array(
             'lon' => $lon,
-            'lat' => $lat
+            'lat' => $lat,
+            'resource' => $this->resource_id
         );
 
         $urlAltiIGN = $this->config->getIgnServiceUrl($APIRestElev, $data);
@@ -54,7 +64,8 @@ Class AltiServicesFromIGN
         $data = array(
             'lon' => $p1Lon."|".$p2Lon,
             'lat' => $p1Lat."|".$p2Lat,
-            'sampling' => 10
+            'sampling' => 10,
+            'resource' => $this->resource_id
         );
 
         $fullURL = $this->config->getIgnServiceUrl($APIRestProfil, $data);
