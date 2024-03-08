@@ -49,11 +49,7 @@
 <group ref="ign">
   <label>IGN</label>
 
-  <input ref="ignServiceKey" type="string" defaultvalue="choisirgeoportail">
-   <label locale="altiProfilAdmin~admin.form.ignServiceKey.label" />
-  </input>
-
-  <input ref="ignServiceUrl" type="string" defaultvalue="https://wxs.ign.fr/">
+  <input ref="ignServiceUrl" type="string" defaultvalue="https://data.geopf.fr/altimetrie/1.0/calcul">
    <label locale="altiProfilAdmin~admin.form.ignServiceUrl.label" />
   </input>
 

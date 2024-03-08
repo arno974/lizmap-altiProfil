@@ -19,7 +19,7 @@ class AltiConfig
             'altiProfileTable' => '',
             'altiProfileProvider'=>'ign',
             'ignServiceKey' => 'essentiels',
-            'ignServiceUrl' => 'https://wxs.ign.fr/',
+            'ignServiceUrl' => 'https://data.geopf.fr/altimetrie/1.0/calcul',
             'dock'=>'dock',
             'srid'=>'3857',
             'profilUnit'=>'PERCENT',
@@ -73,7 +73,7 @@ class AltiConfig
      */
     public function getIgnServiceUrl($path, $parameters)
     {
-        $url = $this->parameters['ignServiceUrl'].$this->parameters['ignServiceKey'];
+        $url = $this->parameters['ignServiceUrl'];
         $url .= $path;
         $url .= '?'. http_build_query($parameters, '', '&');
         return $url;
