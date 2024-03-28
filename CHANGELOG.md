@@ -12,6 +12,12 @@ with some extra keywords : backend, tests, test, translation, funders, important
 
 ### Changed
 
+## 0.4.1 - 2024-03-28
+
+### Fixed
+
+* fix click unavailable when layers use popup (altprofil now enable/disable popup when active)
+
 ## 0.4.0 - 2024-02-07
 
 ### Added
