@@ -69,11 +69,12 @@ class ajaxCtrl extends jController
         $p2Lon = $this->param('p2Lon');
         $p2Lat = $this->param('p2Lat');
         $sampling = $this->param('sampling');
+        $distance = $this->param('distance');
 
         if ( ($this->checkParams($p1Lon, $p1Lat)) and ($this->checkParams($p2Lon, $p2Lat)) ){
             if($altiProvider == 'ign' ){
                 $altiProviderInstance = new \AltiProfil\AltiServicesFromIGN($altiConfig);
-                $rep->data = $altiProviderInstance->getProfil($p1Lon, $p1Lat, $p2Lon, $p2Lat, $sampling);
+                $rep->data = $altiProviderInstance->getProfil($p1Lon, $p1Lat, $p2Lon, $p2Lat, $sampling, $distance);
                 return $rep;
             }elseif ( $altiProvider == 'database' ) {
                 $repository = $this->param('repository');

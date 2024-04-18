@@ -58,7 +58,7 @@ Class AltiServicesFromIGN
     /**
      * Get profil from IGN API
     **/
-    public function getProfil($p1Lon, $p1Lat, $p2Lon, $p2Lat, $sampling)
+    public function getProfil($p1Lon, $p1Lat, $p2Lon, $p2Lat, $sampling, $distance)
     {
         // 150 is the max allowed for a fast response by IGN
         $sampling = min(150, $sampling);
@@ -148,10 +148,11 @@ Class AltiServicesFromIGN
             $customdata = array();
             $resolution = "";
             $i=0;
+            $distanceStep  = ($distance/$sampling);
             foreach($ignProfilResponse->elevations as $key => $value) {
-                    $x[] = $i;
+                    $x[] = $i*$distanceStep;
                     $y[] = $value->z;
-                    $customdata[] = [$value->lon, $value->lat];
+                    $customdata[] = [["lon" => $value->lon, "lat" => $value->lat]];
                     $i = $i+1;
             }
             $data = [ [
