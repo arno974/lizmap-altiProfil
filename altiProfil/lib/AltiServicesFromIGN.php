@@ -60,11 +60,13 @@ Class AltiServicesFromIGN
     **/
     public function getProfil($p1Lon, $p1Lat, $p2Lon, $p2Lat, $sampling)
     {
+        // 150 is the max allowed for a fast response by IGN
+        $sampling = min(150, $sampling);
         $APIRestProfil = "/alti/rest/elevationLine.json";
         $data = array(
             'lon' => $p1Lon."|".$p2Lon,
             'lat' => $p1Lat."|".$p2Lat,
-            'sampling' => 10,
+            'sampling' => $sampling,
             'resource' => $this->resource_id
         );
 
