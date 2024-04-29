@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module xmlns="http://jelix.org/ns/module/1.0">
     <info id="altiProfil" name="altiProfil" createdate="2020-03-12">
-        <version date="2024-03-28">0.4.1</version>
+        <version date="2024-04-29">0.4.2</version>
         <label lang="en_US">altiProfil</label>
         <description lang="en_US" />
         <license URL="https://spdx.org/licenses/GPL-3.0-or-later.html">GNU GPLv3</license>

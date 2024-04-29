@@ -12,6 +12,17 @@ with some extra keywords : backend, tests, test, translation, funders, important
 
 ### Changed
 
+## 0.4.2 - 2024-04-29
+
+### Fixed
+
+* fix hover pop-in in plot when using french IGN altitude provider (now display lon, lat for each point)
+* fix x-axis when using french IGN altitude provider
+
+### Changed
+
+* improve sampling used for profile calculation when using french IGN altitude provider
+
 ## 0.4.1 - 2024-03-28
 
 ### Fixed
