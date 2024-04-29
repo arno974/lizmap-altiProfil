@@ -86,7 +86,8 @@ function getProfil(p1,p2){
         'srs': lizMap.map.projection.projCode,
         'repository': lizUrls.params.repository,
         'project': lizUrls.params.project,
-        'sampling' : Math.round(p1.distanceTo(p2))/2 /* Only use with french mapping Agency (IGN) web service  */
+        'sampling' : Math.round(p1.distanceTo(p2)/25) /* Only use with french mapping Agency (IGN) web service  */,
+        'distance' : Math.round(p1.distanceTo(p2))
     }
 
     getProfilJsonResponse(qParams, function(data){
