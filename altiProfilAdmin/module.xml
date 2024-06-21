@@ -11,6 +11,6 @@
         <homepageURL>https://3liz.com</homepageURL>
     </info>
     <dependencies>
-        <module name="lizmap" minversion="3.4.0" maxversion="3.7.*"/>
+        <module name="lizmap" minversion="3.8.*" maxversion="3.8.*"/>
     </dependencies>
 </module>
