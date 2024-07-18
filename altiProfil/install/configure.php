@@ -24,9 +24,16 @@ class altiProfilModuleConfigurator extends \Jelix\Installer\Module\Configurator
         $altiProfilConfigPath = $helpers->configFilePath('altiProfil.ini.php');
         $helpers->copyFile('config/altiProfil.ini.php.dist', $altiProfilConfigPath, false);
 
-        // Copy CSS and JS assets
-        $helpers->copyDirectoryContent('www', \jApp::wwwPath());
-
     }
+
+    public function getFilesToCopy()
+    {
+        return array(
+            'www/altiprofil/css' => 'www:altiprofil/css',
+            'www/altiprofil/js' => 'www:altiprofil/js',
+            'www/altiprofil/img' => 'www:altiprofil/img',
+        );
+    }
+
 
 }
