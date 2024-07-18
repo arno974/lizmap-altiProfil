@@ -11,7 +11,7 @@ API such as **French IGN** data provider.
 
 ## Installation
 
-Use minimum version 0.4.3 with Lizmap 3.8
+Use minimum version 0.5.0 with Lizmap 3.8
 
 [Version 0.4.2](https://github.com/arno974/lizmap-altiProfil/releases/tag/0.4.2) is compatible with Lizmap Web Client 3.4 and < 3.8.
 

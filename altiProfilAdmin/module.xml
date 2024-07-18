@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module xmlns="http://jelix.org/ns/module/1.0">
     <info id="altiProfilAdmin" name="altiProfilAdmin" createdate="2020-08-12">
-        <version date="2024-04-29">0.4.2</version>
+        <version date="2024-07-18">0.5.0-pre</version>
         <label lang="en_US">altiProfilAdmin</label>
         <description lang="en_US" />
         <license URL="https://spdx.org/licenses/GPL-3.0-or-later.html">GNU GPLv3</license>
@@ -11,6 +11,6 @@
         <homepageURL>https://3liz.com</homepageURL>
     </info>
     <dependencies>
-        <module name="lizmap" minversion="3.8.*" maxversion="3.8.*"/>
+        <module name="lizmap" minversion="3.8.0-rc.1" maxversion="3.8.*"/>
     </dependencies>
 </module>
