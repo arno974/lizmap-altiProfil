@@ -58,7 +58,7 @@ env: dirs
 		EOF
 
 run: stop env install-plugins
-	docker compose up
+	docker compose up -d
 
 stop:
 	docker compose down || true
@@ -81,6 +81,26 @@ install-module:
 	docker compose exec -u ${LIZMAP_USER_ID} lizmap php /www/lizmap/install/configurator.php altiProfil
 	docker compose exec -u ${LIZMAP_USER_ID} lizmap php /www/lizmap/install/configurator.php altiProfilAdmin
 	docker compose exec -u ${LIZMAP_USER_ID} lizmap php /www/lizmap/install/installer.php -v
+
+
+import-lizmap-acl:
+	@echo "Set repositories and users rights if needed"
+	@echo "Set view project"
+	docker compose exec -u $(LIZMAP_USER_ID) lizmap /bin/sh -c 'php lizmap/console.php acl2:add __anonymous "lizmap.repositories.view" altiprofil'
+	docker compose exec -u $(LIZMAP_USER_ID) lizmap /bin/sh -c 'php lizmap/console.php acl2:add users "lizmap.repositories.view" altiprofil'
+	docker compose exec -u $(LIZMAP_USER_ID) lizmap /bin/sh -c 'php lizmap/console.php acl2:add admins "lizmap.repositories.view" altiprofil'
+	@echo "Display WMS links"
+	docker compose exec -u $(LIZMAP_USER_ID) lizmap /bin/sh -c 'php lizmap/console.php acl2:add __anonymous "lizmap.tools.displayGetCapabilitiesLinks" altiprofil'
+	docker compose exec -u $(LIZMAP_USER_ID) lizmap /bin/sh -c 'php lizmap/console.php acl2:add users "lizmap.tools.displayGetCapabilitiesLinks" altiprofil'
+	docker compose exec -u $(LIZMAP_USER_ID) lizmap /bin/sh -c 'php lizmap/console.php acl2:add admins "lizmap.tools.displayGetCapabilitiesLinks" altiprofil'
+	@echo "Edition"
+	docker compose exec -u $(LIZMAP_USER_ID) lizmap /bin/sh -c 'php lizmap/console.php acl2:add __anonymous "lizmap.tools.edition.use" altiprofil'
+	docker compose exec -u $(LIZMAP_USER_ID) lizmap /bin/sh -c 'php lizmap/console.php acl2:add users "lizmap.tools.edition.use" altiprofil'
+	docker compose exec -u $(LIZMAP_USER_ID) lizmap /bin/sh -c 'php lizmap/console.php acl2:add admins "lizmap.tools.edition.use" altiprofil'
+	@echo "Export layers"
+	docker compose exec -u $(LIZMAP_USER_ID) lizmap /bin/sh -c 'php lizmap/console.php acl2:add __anonymous "lizmap.tools.layer.export" altiprofil'
+	docker compose exec -u $(LIZMAP_USER_ID) lizmap /bin/sh -c 'php lizmap/console.php acl2:add users "lizmap.tools.layer.export" altiprofil'
+	docker compose exec -u $(LIZMAP_USER_ID) lizmap /bin/sh -c 'php lizmap/console.php acl2:add admins "lizmap.tools.layer.export" altiprofil'
 
 install-plugins:
 	docker run \
