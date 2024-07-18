@@ -12,6 +12,17 @@ with some extra keywords : backend, tests, test, translation, funders, important
 
 ### Changed
 
+## 0.5.0 - 2024-07-18
+
+### Fixed
+
+* Compatibility with Lizmap 3.8
+
+### Changed
+
+* Tests: Enhancing test environment
+* Remove compatibility with Lizmap 3.7 because of some API changes into Lizmap.
+
 ## 0.4.2 - 2024-04-29
 
 ### Fixed
