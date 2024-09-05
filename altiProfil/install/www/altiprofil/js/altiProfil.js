@@ -69,25 +69,27 @@ function resizePlot(id){
 }
 
 function getProfil(p1,p2){
-    var p1Point = new OpenLayers.LonLat(p1.x, p1.y);
-    var p2Point = new OpenLayers.LonLat(p2.x, p2.y);
+    let p1clone = p1.clone();
+    let p2clone = p2.clone();
     if(lizMap.map.projection.projCode != "EPSG:4326"){
-        var fromProjection = new OpenLayers.Projection(lizMap.map.projection.projCode);
-        var toProjection = new OpenLayers.Projection("EPSG:4326");
-        p1Point.transform(fromProjection, toProjection);
-        p2Point.transform(fromProjection, toProjection);
+        // reproject point to 4326
+        p1clone.transform(lizMap.map.projection.projCode, 'EPSG:4326');
+        p2clone.transform(lizMap.map.projection.projCode, 'EPSG:4326');
     }
-
+    const p1coord = p1.getCoordinates();
+    const p2coord = p2.getCoordinates();
+    let line =new lizMap.ol.geom.LineString([p1coord, p2coord]);
+    const distance = line.getLength();
     var qParams = {
-        'p1Lon': p1Point.lon,
-        'p1Lat': p1Point.lat,
-        'p2Lon': p2Point.lon,
-        'p2Lat': p2Point.lat,
+        'p1Lon': p1clone.getCoordinates()[0],
+        'p1Lat': p1clone.getCoordinates()[1],
+        'p2Lon': p2clone.getCoordinates()[0],
+        'p2Lat': p2clone.getCoordinates()[1],
         'srs': lizMap.map.projection.projCode,
         'repository': lizUrls.params.repository,
         'project': lizUrls.params.project,
-        'sampling' : Math.round(p1.distanceTo(p2)/25) /* Only use with french mapping Agency (IGN) web service  */,
-        'distance' : Math.round(p1.distanceTo(p2))
+        'sampling' : Math.round(distance/25) /* Only use with french mapping Agency (IGN) web service  */,
+        'distance' : Math.round(distance)
     }
 
     getProfilJsonResponse(qParams, function(data){
@@ -116,7 +118,7 @@ function getProfil(p1,p2){
                 yref:'paper',
                 y: 1.16,
                 showarrow: false,
-                text: `point 1 (${Math.round(p1.x)},${Math.round(p1.y)}) | point 2 (${Math.round(p2.x)},${Math.round(p2.y)})`
+                text: `point 1 (${Math.round(p1coord[0])},${Math.round(p1coord[1])}) | point 2 (${Math.round(p2coord[0])},${Math.round(p2coord[1])})`
             },{
                 font: {
                     size: 10
@@ -193,19 +195,24 @@ function getProfil(p1,p2){
 
         myPlot.on('plotly_click', function(data){            
             p = data.points[0].customdata[0];
-            var fromProjection = new OpenLayers.Projection('EPSG:'+_srs);
-            var toProjection = new OpenLayers.Projection(lizMap.map.projection.projCode);
-            var p1ConvertedPoint = new OpenLayers.LonLat(p.lon, p.lat);
-            p1ConvertedPoint.transform(fromProjection, toProjection);
-            var layer = lizMap.map.getLayersByName('altiProfilLayer')[0];
-            if(layer.features.length>3){
-                layer.removeFeatures(layer.features[layer.features.length-1]);
-            }
-            layer.addFeatures([
-                new OpenLayers.Feature.Vector(
-                    new OpenLayers.Geometry.Point(p1ConvertedPoint.lon, p1ConvertedPoint.lat)
-                )
-            ]);
+            let layers = lizMap.mainLizmap.map.getLayers();
+            // searching for altiProfil layer
+            layers.forEach( function (layer) {
+                if (layer.get('altiprofil') == true) {
+                    // add a point to the layer corresponding to chart click
+                    let features = layer.getSource().getFeatures();
+                    let pCoord = new lizMap.ol.geom.Point([p.lon, p.lat]);
+                    pCoord.transform('EPSG:'+_srs,lizMap.map.projection.projCode );
+                    // remove last inserted feature if more than 3 (2 points + 1 line)
+                    if(features.length > 3){
+                        layer.getSource().removeFeature(features[features.length-1]);
+                    }
+                    layer.getSource().addFeature(  new lizMap.ol.Feature({
+                        geometry: pCoord,
+                        name: 'My point on plotly',
+                    }) );
+                }
+            });
         });
         document.getElementsByClassName('xtitle')[0].y.baseVal[0].value = document.getElementsByClassName('xtitle')[0].y.baseVal[0].value - 20;
         resizePlot('profil-chart-container')
@@ -215,112 +222,40 @@ function getProfil(p1,p2){
 function initAltiProfil() {
     var map = lizMap.map;
     //Layer to display clic location
-    altiProfilLayer = map.getLayersByName('altiProfilLayer');
-    if ( altiProfilLayer.length == 0 ) {
-        altiProfilLayer = new OpenLayers.Layer.Vector('altiProfilLayer',{
-            styleMap: new OpenLayers.StyleMap({
-                graphicName: 'cross',
-                pointRadius: 6,
-                fill: true,
-                fillColor: 'white',
-                fillOpacity: 1,
-                stroke: true,
-                strokeWidth: 2,
-                strokeColor: 'red',
-                strokeOpacity: 1,
-                orientation: true
-            })
-        });
-        map.addLayer(altiProfilLayer);
-        altiProfilLayer.setVisibility(true);
-    }
-
-    // add altiprofilCtrl prop to Control with value true to distiguish it
-    OpenLayers.Control.Click = OpenLayers.Class(OpenLayers.Control, {
-        'altiprofilCtrl' :true,
-        defaultHandlerOptions: {
-            'single': true,
-            'double': false,
-            'pixelTolerance': 0,
-            'stopSingle': false,
-            'stopDouble': false
-        },
-        initialize: function(options) {
-            this.handlerOptions = OpenLayers.Util.extend(
-            {}, this.defaultHandlerOptions
-            );
-            OpenLayers.Control.prototype.initialize.apply(
-            this, arguments
-            );
-            this.handler = new OpenLayers.Handler.Click(
-            this, {
-                'click': this.trigger
-            }, this.handlerOptions
-            );
-        },
-        trigger: function(e) {
-            if(altiProfilLayer.features.length>=2){
-                altiProfilLayer.destroyFeatures();
-                $('#altiProfil .menu-content #profil-chart').hide();
-                $('#altiProfil .menu-content #profil-chart-container').empty();
-                $('#altiProfil .menu-content span').html( "..." );
-            }
-            var lonlat = map.getLonLatFromPixel(e.xy);
-            altiProfilLayer.addFeatures([
-                new OpenLayers.Feature.Vector(
-                    new OpenLayers.Geometry.Point(lonlat.lon, lonlat.lat)
-                )
-            ]);
-            numFeat = altiProfilLayer.features.length;
-            getAlti(lonlat.lon,lonlat.lat, numFeat);
-            if(altiProfilLayer.features.length==2){
-                p1Geom = altiProfilLayer.features[0].geometry.getCentroid();
-                p2Geom = altiProfilLayer.features[1].geometry.getCentroid();
-                altiProfilLayer.addFeatures(
-                    [new OpenLayers.Feature.Vector(new OpenLayers.Geometry.LineString([p1Geom, p2Geom]))]
-                );
-                
-                getProfil(p1Geom, p2Geom);
-                //setTimeout(() => { getProfil(p1Geom, p2Geom); }, 5000);
-
-                $('#altiProfil .menu-content #profil-chart').show();
-            }
-        }
+    // define styes
+    let styles = new lizMap.ol.style.Style({
+        stroke: new lizMap.ol.style.Stroke({color: 'red', width :2}),
+        fill: new lizMap.ol.style.Fill({color: 'red', width :2}),
+        image: new lizMap.ol.style.RegularShape({
+          fill: new lizMap.ol.style.Fill({color: 'red', width :2}),
+          stroke: new lizMap.ol.style.Stroke({color: 'red', width: 5}),
+          points: 4,
+          radius: 10,
+          radius2: 0,
+          angle: 0,
+        }),
+      });
+    const altiProfilSource= new lizMap.ol.source.Vector();
+    const altiProfilLayer = new  lizMap.ol.layer.Vector({
+        style: styles,
+        source: altiProfilSource,
+        projection : lizMap.map.projection,
+        properties : {"altiprofil" : true}
     });
-    var profilClick = new OpenLayers.Control.Click();
-    map.addControl(profilClick);
 
     function onAltiDockOpened() {
-        var controls = lizMap.map.controls;
-        controls.forEach(function (ctrl) {
-            if (ctrl.CLASS_NAME == 'OpenLayers.Control.WMSGetFeatureInfo'){
-                ctrl.deactivate();
-            }
-            // desactivate existing control which handle single click (TODO : should store previous state if multiple controls of this kind)
-            if (ctrl.CLASS_NAME == 'OpenLayers.Control' && ctrl.defaultHandlerOptions?.single == true && ctrl?.altiprofilCtrl != true) {
-                ctrl.deactivate();
-            }
-        });
-        altiProfilLayer.setVisibility(true);
-        profilClick.activate();
+        // disable popup
+        lizMap.mainLizmap.popup.active = false;
+        altiProfilLayer.setVisible(true);
     }
 
     function onAltiDockClosed() {
-        var controls = lizMap.map.controls;
-        controls.forEach(function (ctrl) {
-            if (ctrl.CLASS_NAME == 'OpenLayers.Control.WMSGetFeatureInfo'){
-                ctrl.activate();
-            }
-            // activate existing control which handle single click
-            if (ctrl.CLASS_NAME == 'OpenLayers.Control' && ctrl.defaultHandlerOptions?.single == true && ctrl?.altiprofilCtrl != true) {
-                ctrl.activate();
-            }
-        });
+        // enable popup
+        lizMap.mainLizmap.popup.active = true;
         $('#altiProfil .menu-content #profil-chart-container').empty();
         $('#altiProfil .menu-content span').html( "..." );
-        altiProfilLayer.destroyFeatures();
-        altiProfilLayer.setVisibility(false);
-        profilClick.deactivate();
+        altiProfilSource.clear();
+        altiProfilLayer.setVisible(false);
     }
 
     lizMap.events.on({
@@ -358,6 +293,45 @@ function initAltiProfil() {
         }
     });
 
+    lizMap.mainLizmap.map.addLayer(altiProfilLayer);
+
+    lizMap.mainLizmap.map.on('singleclick', evt => {
+            if (! lizMap.mainLizmap.popup.active ) {
+                let nbFeatures = altiProfilSource.getFeatures().length;
+                if(nbFeatures>=2){
+                    altiProfilSource.clear();
+                    $('#altiProfil .menu-content #profil-chart').hide();
+                    $('#altiProfil .menu-content #profil-chart-container').empty();
+                    $('#altiProfil .menu-content span').html( "..." );
+                }
+
+                const feature = new lizMap.ol.Feature({
+                    geometry: new lizMap.ol.geom.Point(evt.coordinate),
+                    name: 'AltiPoint'+nbFeatures,
+                });
+                altiProfilSource.addFeature(feature);
+                nbFeatures++;
+                getAlti(evt.coordinate[0],evt.coordinate[1], nbFeatures);
+                // Add a line between points
+                if(nbFeatures ==2){
+                    let altiLayerFeature = altiProfilSource.getFeatures();
+
+                    p1Geom = altiLayerFeature[0].getGeometry();
+                    p2Geom = altiLayerFeature[1].getGeometry();
+
+                    altiProfilSource.addFeature(  new lizMap.ol.Feature({
+                        geometry: new lizMap.ol.geom.LineString([p1Geom.getFirstCoordinate(), p2Geom.getFirstCoordinate()]),
+                        style :  new lizMap.ol.style.Style({
+                            stroke: new lizMap.ol.style.Stroke({color: 'red', width: 4}),
+                        }),
+                        name: 'AltiLine',
+                    }) );
+                    getProfil(p1Geom, p2Geom);
+                    $('#altiProfil .menu-content #profil-chart').show();
+                }
+            }
+        }
+        );
 
 
 }

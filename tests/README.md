@@ -7,17 +7,13 @@ Steps:
     # Clean previous versions (optional)
     make clean
 
-    # Run the different services (default is Lizmap 3.6)
+    # Run the different services (default is Lizmap 3.8.rc-1)
     make run
-    
-    # or for older lizmap
-    make run LIZMAP_VERSION_TAG=3.5
-    ```
 
-- If you run Lizmap 3.6+, install the altiProfil modules with
-
-    ```
+    # Install the modules
     make install-module
+
+    make import-lizmap-acl
     ```
 
 - Open your browser at `http://localhost:9012`
@@ -48,5 +44,5 @@ psql service=lizmap-altiprofil
 
 ## Access to the lizmap container
 
-If you want to enter into the lizmap container to execute some commands, 
+If you want to enter into the lizmap container to execute some commands,
 execute `make shell`.

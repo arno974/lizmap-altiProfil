@@ -11,7 +11,10 @@ API such as **French IGN** data provider.
 
 ## Installation
 
-This module is compatible with Lizmap Web Client 3.4 and higher.
+Use minimum version 0.5.0 with Lizmap 3.8
+
+[Version 0.4.2](https://github.com/arno974/lizmap-altiProfil/releases/tag/0.4.2) is compatible with Lizmap Web Client 3.4 and < 3.8.
+
 You should install it with [Composer](https://getcomposer.org).
 If you can't, you must follow the **manual installation** part.
 
