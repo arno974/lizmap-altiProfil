@@ -170,11 +170,12 @@ function getProfil(p1,p2){
           };
         var data = [profilLine];
 
-
+        var plotLocale = navigator.language || navigator.userLanguage;
         var config = {
             showlegend: false,
             displaylogo: false,
             responsive: true,
+            locale: plotLocale,
             toImageButtonOptions: {
               format: 'jpeg', // one of png, svg, jpeg, webp
               filename: 'profil',
