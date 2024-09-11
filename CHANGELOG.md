@@ -12,6 +12,17 @@ with some extra keywords : backend, tests, test, translation, funders, important
 
 ### Changed
 
+## 0.5.1 - 2024-09-11
+
+### Fixed
+
+* fix d3 does not exist error
+* fix sampling for french IGN altitude provider
+
+### Changed
+
+* Tests: Lizmap Web Client tag 3.8
+
 ## 0.5.0 - 2024-07-18
 
 ### Fixed
