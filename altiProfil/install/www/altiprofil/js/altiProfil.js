@@ -59,13 +59,12 @@ function getProfilJsonResponse(params, aCallback){
 }
 
 function resizePlot(id){
-    var d3 = Plotly.d3;
-    var gd = d3.select('#'+id)
-    .style({
+    $('#'+id)
+    .css({
         width: '100%',
         margin: '0px'
     });
-    Plotly.Plots.resize(gd.node());
+    Plotly.Plots.resize($('#'+id)[0]);
 }
 
 function getProfil(p1,p2){
@@ -190,7 +189,7 @@ function getProfil(p1,p2){
         $('#altiProfil .menu-content #profil-chart .spinner').hide();
         var myPlot = document.getElementById('profil-chart-container');
 
-        myPlot.on('plotly_click', function(data){            
+        myPlot.on('plotly_click', function(data){
             p = data.points[0].customdata[0];
             var fromProjection = new OpenLayers.Projection('EPSG:'+_srs);
             var toProjection = new OpenLayers.Projection(lizMap.map.projection.projCode);
@@ -278,7 +277,7 @@ function initAltiProfil() {
                 altiProfilLayer.addFeatures(
                     [new OpenLayers.Feature.Vector(new OpenLayers.Geometry.LineString([p1Geom, p2Geom]))]
                 );
-                
+
                 getProfil(p1Geom, p2Geom);
                 //setTimeout(() => { getProfil(p1Geom, p2Geom); }, 5000);
 
