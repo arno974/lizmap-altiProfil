@@ -77,6 +77,9 @@ function getProfil(p1,p2){
         p2Point.transform(fromProjection, toProjection);
     }
 
+    var distance = Math.round(p1.distanceTo(p2));
+    var sampling = Math.round(distance <= 100 ? distance - 2 : (distance <= 500 ? distance / 5 : distance / 25));
+
     var qParams = {
         'p1Lon': p1Point.lon,
         'p1Lat': p1Point.lat,
@@ -85,8 +88,8 @@ function getProfil(p1,p2){
         'srs': lizMap.map.projection.projCode,
         'repository': lizUrls.params.repository,
         'project': lizUrls.params.project,
-        'sampling' : Math.round(p1.distanceTo(p2)/25) /* Only use with french mapping Agency (IGN) web service  */,
-        'distance' : Math.round(p1.distanceTo(p2))
+        'sampling' : sampling /* Only use with french mapping Agency (IGN) web service  */,
+        'distance' : distance
     }
 
     getProfilJsonResponse(qParams, function(data){
