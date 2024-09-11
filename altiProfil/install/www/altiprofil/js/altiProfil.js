@@ -78,7 +78,10 @@ function getProfil(p1,p2){
     const p1coord = p1.getCoordinates();
     const p2coord = p2.getCoordinates();
     let line =new lizMap.ol.geom.LineString([p1coord, p2coord]);
-    const distance = line.getLength();
+
+    const distance = Math.round(line.getLength());
+    const sampling = Math.round(distance <= 100 ? distance - 2 : (distance <= 500 ? distance / 5 : distance / 25));
+
     var qParams = {
         'p1Lon': p1clone.getCoordinates()[0],
         'p1Lat': p1clone.getCoordinates()[1],
@@ -87,8 +90,8 @@ function getProfil(p1,p2){
         'srs': lizMap.map.projection.projCode,
         'repository': lizUrls.params.repository,
         'project': lizUrls.params.project,
-        'sampling' : Math.round(distance/25) /* Only use with french mapping Agency (IGN) web service  */,
-        'distance' : Math.round(distance)
+        'sampling' : sampling /* Only use with french mapping Agency (IGN) web service  */,
+        'distance' : distance
     }
 
     getProfilJsonResponse(qParams, function(data){
