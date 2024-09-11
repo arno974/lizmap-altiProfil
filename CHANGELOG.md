@@ -12,6 +12,17 @@ with some extra keywords : backend, tests, test, translation, funders, important
 
 ### Changed
 
+## 0.4.3 - 2024-09-11
+
+### Fixed
+
+* fix d3 does not exist error
+* fix sampling for french IGN altitude provider
+
+### Changed
+
+* improve tests environment
+
 ## 0.4.2 - 2024-04-29
 
 ### Fixed
