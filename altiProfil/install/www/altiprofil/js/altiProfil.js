@@ -172,7 +172,7 @@ function getProfil(p1,p2){
           };
         var data = [profilLine];
 
-        var plotLocale = navigator.language || navigator.userLanguage;
+        var plotLocale = lizMap.config.datavizLayers.locale.substr(0,2).toLowerCase();
         var config = {
             showlegend: false,
             displaylogo: false,
