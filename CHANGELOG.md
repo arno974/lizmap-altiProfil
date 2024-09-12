@@ -12,6 +12,16 @@ with some extra keywords : backend, tests, test, translation, funders, important
 
 ### Changed
 
+## 0.5.2 - 2024-09-12
+
+### Added
+
+* Add Romanian language, contribution from @ygorigor
+
+### Fixed
+
+* Fixed typo in English language
+
 ## 0.5.1 - 2024-09-11
 
 ### Fixed
