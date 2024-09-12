@@ -11,7 +11,7 @@
         <homepageURL>http://geolab.re</homepageURL>
     </info>
     <dependencies>
-        <module name="lizmap" minversion="3.8.0-rc.1" maxversion="3.9.*" />
+        <module name="lizmap" minversion="3.8.0" maxversion="3.9.*" />
     </dependencies>
     <autoload>
         <namespacePathMap name="AltiProfil" dir="lib/"/>
