@@ -172,11 +172,12 @@ function getProfil(p1,p2){
           };
         var data = [profilLine];
 
-
+        var plotLocale = lizMap.config.datavizLayers.locale.substr(0,2).toLowerCase();
         var config = {
             showlegend: false,
             displaylogo: false,
             responsive: true,
+            locale: plotLocale,
             toImageButtonOptions: {
               format: 'jpeg', // one of png, svg, jpeg, webp
               filename: 'profil',
