@@ -222,7 +222,6 @@ function getProfil(p1,p2){
 }
 
 function initAltiProfil() {
-    var map = lizMap.map;
     //Layer to display clic location
     // define styes
     let styles = new lizMap.ol.style.Style({
@@ -295,7 +294,7 @@ function initAltiProfil() {
         }
     });
 
-    lizMap.mainLizmap.map.addLayer(altiProfilLayer);
+    lizMap.mainLizmap.map.addToolLayer(altiProfilLayer);
 
     lizMap.mainLizmap.map.on('singleclick', evt => {
             if (! lizMap.mainLizmap.popup.active ) {
@@ -305,6 +304,7 @@ function initAltiProfil() {
                     $('#altiProfil .menu-content #profil-chart').hide();
                     $('#altiProfil .menu-content #profil-chart-container').empty();
                     $('#altiProfil .menu-content span').html( "..." );
+                    nbFeatures = 0;
                 }
 
                 const feature = new lizMap.ol.Feature({
