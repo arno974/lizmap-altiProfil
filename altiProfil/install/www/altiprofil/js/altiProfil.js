@@ -298,7 +298,7 @@ function initAltiProfil() {
     lizMap.mainLizmap.map.addLayer(altiProfilLayer);
 
     lizMap.mainLizmap.map.on('singleclick', evt => {
-            if (! lizMap.mainLizmap.popup.active ) {
+            if (altiProfilLayer.getVisible()) {
                 let nbFeatures = altiProfilSource.getFeatures().length;
                 if(nbFeatures>=2){
                     altiProfilSource.clear();
