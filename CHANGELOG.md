@@ -12,6 +12,14 @@ with some extra keywords : backend, tests, test, translation, funders, important
 
 ### Changed
 
+## 0.5.3 - 2024-10-02
+
+### Fixed
+
+* Fix layer not in top of the map
+* Fix altitude not display for 1st point after several click
+* Improve compatibility for external scripts listening to singleclick event
+
 ## 0.5.2 - 2024-09-12
 
 ### Added
