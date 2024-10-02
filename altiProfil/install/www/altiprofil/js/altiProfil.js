@@ -241,7 +241,8 @@ function initAltiProfil() {
         style: styles,
         source: altiProfilSource,
         projection : lizMap.map.projection,
-        properties : {"altiprofil" : true}
+        properties : {"altiprofil" : true},
+        visible : false
     });
 
     function onAltiDockOpened() {
@@ -297,7 +298,7 @@ function initAltiProfil() {
     lizMap.mainLizmap.map.addToolLayer(altiProfilLayer);
 
     lizMap.mainLizmap.map.on('singleclick', evt => {
-            if (! lizMap.mainLizmap.popup.active ) {
+            if (altiProfilLayer.getVisible()) {
                 let nbFeatures = altiProfilSource.getFeatures().length;
                 if(nbFeatures>=2){
                     altiProfilSource.clear();
