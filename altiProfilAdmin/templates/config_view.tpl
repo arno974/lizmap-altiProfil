@@ -2,7 +2,7 @@
 
 <h1>{@altiProfilAdmin~admin.configuration.label@}</h1>
 
-{formdatafull $form}
+{formdatafull $form , 'htmlbootstrap'}
 
 <!-- Modify -->
 {ifacl2 'lizmap.admin.services.update'}
