@@ -42,7 +42,9 @@
   <input ref="srid" type="integer" defaultvalue="3857">
    <label locale="altiProfilAdmin~admin.form.srid.label" />
   </input>
-
+  <output ref='connection_check' >
+    <label locale="altiProfilAdmin~admin.form.connection_check.label" />
+  </output>
 </group>
 
 
