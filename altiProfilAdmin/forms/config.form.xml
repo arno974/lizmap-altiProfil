@@ -35,14 +35,16 @@
 <group ref="database">
   <label locale="altiProfilAdmin~admin.form.group.database.label"/>
 
-  <input ref="altiProfileTable" type="string" defaultvalue="dem_table">
+  <input ref="altiProfileTable" type="string" defaultvalue="dem_table" pattern='/^[a-zA-Z0-9_]+$/'>
    <label locale="altiProfilAdmin~admin.form.altiProfileTable.label" />
   </input>
 
   <input ref="srid" type="integer" defaultvalue="3857">
    <label locale="altiProfilAdmin~admin.form.srid.label" />
   </input>
-
+  <output ref='connection_check' >
+    <label locale="altiProfilAdmin~admin.form.connection_check.label" />
+  </output>
 </group>
 
 
