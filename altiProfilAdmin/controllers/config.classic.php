@@ -54,7 +54,7 @@ class configCtrl extends jController {
         $tableName =  $form->getData('altiProfileTable');
         if ($form->getData('altiProfileProvider') == 'database' && !empty($tableName)) {
             try{
-              $sql = 'SELECT rast FROM '.$tableName.' limit 0';
+              $sql = 'SELECT rast FROM "'.$tableName.'" limit 0';
               $cnx = \jDb::getConnection( 'altiProfil' );
               $qResult = $cnx->query( $sql);
               $form->setData('connection_check', jLocale::get('altiProfilAdmin~admin.form.connection_check.ok'));
