@@ -163,11 +163,11 @@ Class AltiServicesFromIGN
                 "altisource" => $this->config->getAltisource(),
                 "source" => 'IGN'
              ] ];
-            return json_encode($data);
+            return $data;
         }else{
             $errorMsg = "AltiProfil IGN wrong request";
             \jLog::log($errorMsg);
-            return '{"error msg": "'.$data.'" }';
+            return array("error msg" => $data);
         }
     }
 }
