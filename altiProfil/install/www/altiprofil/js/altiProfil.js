@@ -14,7 +14,7 @@ function getAltiJsonResponse(params, aCallback){
         params,
         function(data) {
             if(aCallback){
-                    aCallback(JSON.parse(data));
+                    aCallback(data);
             }
         }
         ,'json'
@@ -51,7 +51,7 @@ function getProfilJsonResponse(params, aCallback){
         params,
         function(data) {
             if(aCallback){
-                    aCallback(JSON.parse(data));
+                    aCallback(data);
             }
         }
         ,'json'

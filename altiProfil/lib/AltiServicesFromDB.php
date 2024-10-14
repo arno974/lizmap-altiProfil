@@ -80,7 +80,7 @@ Class AltiServicesFromDB {
         $cnx = \jDb::getConnection( 'altiProfil' );
         $qResult = $cnx->query( $sql );
         $result = array("elevations"=>[$qResult->fetch(\PDO::FETCH_ASSOC)]);
-        return json_encode($result);
+        return $result;
     }
 
     /**
@@ -107,7 +107,7 @@ Class AltiServicesFromDB {
                             ST_Transform(ST_SetSRID(ST_MakePoint(%5$f, %6$f),4326), %4$s)
                         )
                     AS geom
-                ), 
+                ),
                 linemesure AS(
                     -- Add a mesure dimension to extract steps
                     SELECT
@@ -126,19 +126,19 @@ Class AltiServicesFromDB {
                             ELSE %8$d*5
                         END as resolution
                     FROM line
-                ), 
+                ),
                 points2d AS (
                     SELECT ST_GeometryN(ST_LocateAlong(linem, i), 1) AS geom, resolution FROM linemesure ORDER BY i
                 ),
                 cells AS (
                     -- Get DEM elevation for each
-                    SELECT 
-                        p.geom AS geom, 
-                        ST_Value(%1$s.rast, 1, p.geom) AS val,                      
+                    SELECT
+                        p.geom AS geom,
+                        ST_Value(%1$s.rast, 1, p.geom) AS val,
                         resolution
                     FROM %1$s, points2d p
                     WHERE ST_Intersects(%1$s.rast, p.geom)
-                ),           
+                ),
                 -- Instantiate 3D points
                 points3d AS (
                     SELECT ST_SetSRID(
@@ -147,15 +147,12 @@ Class AltiServicesFromDB {
                             ) AS geom, resolution FROM cells
                 ),
                 line3D AS(
-                    SELECT ST_MakeLine(geom)as geom, MAX(resolution) as resolution FROM points3d
+                    SELECT ST_MakeLine(geom) as geom, MAX(resolution) as resolution FROM points3d
                 ),
                 xz AS(
-																													
-						  
                     SELECT (ST_DumpPoints(geom)).geom AS geom,
                     ST_StartPoint(geom) AS origin, resolution
                     FROM line3D
-								   
                 )
             -- Build 3D line from 3D points
             SELECT ST_distance(origin, geom) AS x, ST_Z(geom) as y, ST_X(geom) as lon, ST_Y(geom) as lat, resolution FROM xz',
@@ -214,9 +211,11 @@ Class AltiServicesFromDB {
         );
         $cnx = \jDb::getConnection('altiProfil');
         $qResult = $cnx->query($sql);
-        $slope = json_encode(
+        $slope = json_decode(
+            json_encode(
                     $qResult->fetch(\PDO::FETCH_ASSOC)
-                );
+            )
+        );
         $data = [ [
             "x" => $x,
             "y" => $y,
@@ -227,7 +226,6 @@ Class AltiServicesFromDB {
             "slope" => $slope
          ] ];
 
-        return json_encode($data);
+        return $data;
     }
 }
-
