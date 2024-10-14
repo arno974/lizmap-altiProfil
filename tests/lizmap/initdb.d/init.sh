@@ -7,4 +7,5 @@ EOSQL
 
 psql --username postgres --no-password -d lizmap <<-EOSQL
     CREATE EXTENSION IF NOT EXISTS postgis SCHEMA public;
+    CREATE EXTENSION IF NOT EXISTS postgis_raster SCHEMA public;
 EOSQL
