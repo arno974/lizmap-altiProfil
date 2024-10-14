@@ -212,11 +212,7 @@ Class AltiServicesFromDB {
         );
         $cnx = \jDb::getConnection('altiProfil');
         $qResult = $cnx->query($sql);
-        $slope = json_decode(
-            json_encode(
-                    $qResult->fetch(\PDO::FETCH_ASSOC)
-            )
-        );
+        $slope = $qResult->fetch(\PDO::FETCH_ASSOC);
         $data = [ [
             "x" => $x,
             "y" => $y,
