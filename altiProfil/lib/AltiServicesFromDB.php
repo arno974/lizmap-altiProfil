@@ -151,11 +151,12 @@ Class AltiServicesFromDB {
                 ),
                 xz AS(
                     SELECT (ST_DumpPoints(geom)).geom AS geom,
-                    ST_StartPoint(geom) AS origin, resolution
+                    ST_LineLocatePoint(geom, (ST_DumpPoints(geom)).geom) * ST_Length(geom) AS loc,
+                    resolution
                     FROM line3D
                 )
             -- Build 3D line from 3D points
-            SELECT ST_distance(origin, geom) AS x, ST_Z(geom) as y, ST_X(geom) as lon, ST_Y(geom) as lat, resolution FROM xz',
+            SELECT loc AS x, ST_Z(geom) as y, ST_X(geom) as lon, ST_Y(geom) as lat, resolution FROM xz',
             $this->AltiProfileTable,
             $p1Lon, $p1Lat,
             $this->Srid,
