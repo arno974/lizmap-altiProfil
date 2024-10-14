@@ -102,6 +102,13 @@ import-lizmap-acl:
 	docker compose exec -u $(LIZMAP_USER_ID) lizmap /bin/sh -c 'php lizmap/console.php acl2:add users "lizmap.tools.layer.export" altiprofil'
 	docker compose exec -u $(LIZMAP_USER_ID) lizmap /bin/sh -c 'php lizmap/console.php acl2:add admins "lizmap.tools.layer.export" altiprofil'
 
+import-data:
+	export PGPASSWORD=lizmap1234!; psql -h localhost -U lizmap -d lizmap -p 9014 -f sql/rgealti_5m_mtp_create.sql
+	export PGPASSWORD=lizmap1234!; psql -h localhost -U lizmap -d lizmap -p 9014 -f sql/rgealti_5m_mtp_insert1.sql
+	export PGPASSWORD=lizmap1234!; psql -h localhost -U lizmap -d lizmap -p 9014 -f sql/rgealti_5m_mtp_insert2.sql
+	export PGPASSWORD=lizmap1234!; psql -h localhost -U lizmap -d lizmap -p 9014 -f sql/rgealti_5m_mtp_optimize.sql
+
+
 install-plugins:
 	docker run \
 	    -u $(LIZMAP_USER_ID):$(LIZMAP_USER_GID) \

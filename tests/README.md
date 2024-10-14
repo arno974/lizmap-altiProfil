@@ -14,11 +14,23 @@ Steps:
     make install-module
 
     make import-lizmap-acl
+
+    make import-data
     ```
 
 - Open your browser at `http://localhost:9012`
 
 For more information, refer to the [docker compose documentation](https://docs.docker.com/compose/)
+
+# Testing Profil from PostgreSQL database table
+
+* Go to `http://localhost:9012/admin.php`
+* Click on `Altiprofil` menu
+* Click on `Modify` button
+* Choose `PostgreSQL database table` for `Altitude provider`
+* Put `5` for `Resolution`
+* Enter `raster.rgealti_5m_mtp` for `Database table`
+* Put `2154` for `SRID`
 
 ## Access to the dockerized PostgreSQL instance
 
@@ -30,7 +42,7 @@ The service file can be stored in your user home `~/.pg_service.conf` and should
 [lizmap-altiprofil]
 dbname=lizmap
 host=localhost
-port=9097
+port=9014
 user=lizmap
 password=lizmap1234!
 ```
