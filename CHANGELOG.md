@@ -12,6 +12,23 @@ with some extra keywords : backend, tests, test, translation, funders, important
 
 ### Changed
 
+## 0.5.4 - 2024-10-24
+
+### Added
+
+* Tests : postgis raster table (rgealti_5m_mtp)
+* Admin now check and display the raster table connection status
+* Code improvement (php, sql)
+
+### Fixed
+
+* Fix position in profile not displayed on map
+
+### changed
+
+* Check for valid raster table name
+* Allow uppercase in raster table name
+
 ## 0.5.3 - 2024-10-02
 
 ### Fixed
