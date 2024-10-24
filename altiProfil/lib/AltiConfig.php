@@ -18,7 +18,6 @@ class AltiConfig
             'altisource' => '',
             'altiProfileTable' => '',
             'altiProfileProvider'=>'ign',
-            'ignServiceKey' => 'essentiels',
             'ignServiceUrl' => 'https://data.geopf.fr/altimetrie/1.0/calcul',
             'dock'=>'dock',
             'srid'=>'3857',
