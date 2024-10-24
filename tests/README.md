@@ -7,7 +7,7 @@ Steps:
     # Clean previous versions (optional)
     make clean
 
-    # Run the different services (default is Lizmap 3.8.rc-1)
+    # Run the different services
     make run
 
     # Install the modules
