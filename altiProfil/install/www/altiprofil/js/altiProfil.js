@@ -141,7 +141,6 @@ function getProfil(p1,p2){
         if ( ALTI_PROVIDER == "database"){
             var _resolution = data[0]['resolution'];
             var _slope = data[0]['slope'];
-            _slope = $.parseJSON(_slope);
 
             layout['title'] = '<b>Profil ('+ LOCALES_ALTI_RESOLUTION +' ' +_resolution+ 'm)';
             layout['annotations'].push(
