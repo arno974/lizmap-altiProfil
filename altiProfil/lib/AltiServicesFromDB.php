@@ -63,12 +63,12 @@ Class AltiServicesFromDB {
 
         $sql = sprintf('
             SELECT ST_Value(
-                %1$s.rast,
+                "%1$s".rast,
                 ST_Transform(ST_SetSRID(ST_MakePoint(%2$f,%3$f),4326),%4$s)
             ) as z
-            FROM %1$s
+            FROM "%1$s"
             WHERE ST_Intersects(
-                %1$s.rast,
+                "%1$s".rast,
                 ST_Transform(ST_SetSRID(ST_MakePoint(%2$f,%3$f),4326),%4$s)
 
         )',
@@ -134,10 +134,10 @@ Class AltiServicesFromDB {
                     -- Get DEM elevation for each
                     SELECT
                         p.geom AS geom,
-                        ST_Value(%1$s.rast, 1, p.geom) AS val,
+                        ST_Value("%1$s".rast, 1, p.geom) AS val,
                         resolution
-                    FROM %1$s, points2d p
-                    WHERE ST_Intersects(%1$s.rast, p.geom)
+                    FROM "%1$s", points2d p
+                    WHERE ST_Intersects("%1$s".rast, p.geom)
                 ),
                 -- Instantiate 3D points
                 points3d AS (
@@ -189,9 +189,9 @@ Class AltiServicesFromDB {
                     AS geom
                 ), RasterCells AS (
                     -- Intersect the line with the DEM
-                    SELECT ST_Clip(%1$s.rast, line.geom, -9999, TRUE) as rast
-                    FROM %1$s, line
-                    WHERE ST_Intersects(%1$s.rast, line.geom)
+                    SELECT ST_Clip("%1$s".rast, line.geom, -9999, TRUE) as rast
+                    FROM "%1$s", line
+                    WHERE ST_Intersects("%1$s".rast, line.geom)
                 ), rasterSlopStat AS (
                     -- Compute the slope and the statistics
                     Select (ST_SummaryStatsAgg(ST_Slope(rast, 1, \'32BF\', \'%7$s\', 1.0), 1, TRUE, 1)).*
