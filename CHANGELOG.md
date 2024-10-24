@@ -12,6 +12,13 @@ with some extra keywords : backend, tests, test, translation, funders, important
 
 ### Changed
 
+## 0.5.5 - 2024-10-24
+
+### Fixed
+
+* Update translations
+* Fix JSON encode
+
 ## 0.5.4 - 2024-10-24
 
 ### Added
