@@ -12,5 +12,4 @@ dock=dock
 
 ;si cas IGN
 altiProfileProvider=ign
-ignServiceKey=essentiels
 ignServiceUrl="https://data.geopf.fr/altimetrie/1.0/calcul"
