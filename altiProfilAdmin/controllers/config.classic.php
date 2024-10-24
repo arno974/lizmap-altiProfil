@@ -41,7 +41,6 @@ class configCtrl extends jController {
      */
     function index() {
         $rep = $this->getResponse('html');
-
         // Create the form
         $form = jForms::create('altiProfilAdmin~config');
 
@@ -52,7 +51,20 @@ class configCtrl extends jController {
                 $form->setData( $ctrl->ref, $val );
             }
         }
-
+        $tableName =  $form->getData('altiProfileTable');
+        if ($form->getData('altiProfileProvider') == 'database' && !empty($tableName)) {
+            try{
+              $sql = 'SELECT rast FROM "'.$tableName.'" limit 0';
+              $cnx = \jDb::getConnection( 'altiProfil' );
+              $qResult = $cnx->query( $sql);
+              $form->setData('connection_check', jLocale::get('altiProfilAdmin~admin.form.connection_check.ok'));
+            } catch (\Exception $e) {
+                 $form->setData('connection_check' , jLocale::get('altiProfilAdmin~admin.form.connection_check.error'));
+                 jLog::log("AltiProfil Admin :: ".$e->getMessage());
+            }
+        } else {
+            $form->getControl('connection_check')->deactivate();
+        }
         $tpl = new jTpl();
         $tpl->assign( 'form', $form );
         $rep->body->assign('MAIN', $tpl->fetch('config_view'));
@@ -71,7 +83,8 @@ class configCtrl extends jController {
 
         // Create the form
         $form = jForms::create('altiProfilAdmin~config');
-
+        // no need to see output value
+        $form->getControl('connection_check')->deactivate();
         // Set form data values
         foreach ( $form->getControls() as $ctrl ) {
             if ( $ctrl->type != 'submit' ){
