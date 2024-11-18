@@ -22,16 +22,6 @@ Steps:
 
 For more information, refer to the [docker compose documentation](https://docs.docker.com/compose/)
 
-# Testing Profil from PostgreSQL database table
-
-* Go to `http://localhost:9012/admin.php`
-* Click on `Altiprofil` menu
-* Click on `Modify` button
-* Choose `PostgreSQL database table` for `Altitude provider`
-* Put `5` for `Resolution`
-* Enter `raster.rgealti_5m_mtp` for `Database table`
-* Put `2154` for `SRID`
-
 ## Access to the dockerized PostgreSQL instance
 
 You can access the docker PostgreSQL test database `lizmap` from your host by configuring a

@@ -24,6 +24,7 @@ with some extra keywords : backend, tests, test, translation, funders, important
 
 * Check for valid raster table name
 * Allow uppercase in raster table name
+* Allow define raster table schema name
 
 ## 0.4.3 - 2024-09-11
 
