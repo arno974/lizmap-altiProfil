@@ -24,14 +24,7 @@ class configCtrl extends jController {
 
     function __construct( $request ) {
         parent::__construct( $request );
-        if (method_exists('jApp', 'varConfigPath')) {
-	    // LWC >= 3.6
-	    $monfichier = \jApp::varConfigPath('altiProfil.ini.php');
-            $this->ini = new \Jelix\IniFile\IniModifier($monfichier);
-        } else {
-	    $monfichier = \jApp::configPath('altiProfil.ini.php');
-            $this->ini = new jIniFileModifier($monfichier);
-        }
+        $this->config = new \AltiProfil\AltiConfig();
     }
 
     /**
@@ -47,20 +40,15 @@ class configCtrl extends jController {
         // Set form data values
         foreach ( $form->getControls() as $ctrl ) {
             if ( $ctrl->type != 'submit' ){
-                $val = $this->ini->getValue( $ctrl->ref, 'altiProfil' );
+                $val = $this->config->getValue( $ctrl->ref );
                 $form->setData( $ctrl->ref, $val );
             }
         }
-        $tableName =  $form->getData('altiProfileTable');
-        if ($form->getData('altiProfileProvider') == 'database' && !empty($tableName)) {
-            try{
-              $sql = 'SELECT rast FROM "'.$tableName.'" limit 0';
-              $cnx = \jDb::getConnection( 'altiProfil' );
-              $qResult = $cnx->query( $sql);
+        if ($form->getData('altiProfileProvider') == 'database' && !empty($form->getData('altiProfileTable'))) {
+            if ($this->config->checkConnection()) {
               $form->setData('connection_check', jLocale::get('altiProfilAdmin~admin.form.connection_check.ok'));
-            } catch (\Exception $e) {
-                 $form->setData('connection_check' , jLocale::get('altiProfilAdmin~admin.form.connection_check.error'));
-                 jLog::log("AltiProfil Admin :: ".$e->getMessage());
+            } else {
+              $form->setData('connection_check' , jLocale::get('altiProfilAdmin~admin.form.connection_check.error'));
             }
         } else {
             $form->getControl('connection_check')->deactivate();
@@ -88,7 +76,7 @@ class configCtrl extends jController {
         // Set form data values
         foreach ( $form->getControls() as $ctrl ) {
             if ( $ctrl->type != 'submit' ){
-                $val = $this->ini->getValue( $ctrl->ref, 'altiProfil' );
+                $val = $this->config->getValue( $ctrl->ref );
                 $form->setData( $ctrl->ref, $val );
             }
         }
@@ -161,14 +149,24 @@ class configCtrl extends jController {
       return $rep;
     }
 
+    $ini = null;
+    if (method_exists('jApp', 'varConfigPath')) {
+	    // LWC >= 3.6
+	    $monfichier = \jApp::varConfigPath('altiProfil.ini.php');
+      $ini = new \Jelix\IniFile\IniModifier($monfichier);
+    } else {
+	    $monfichier = \jApp::configPath('altiProfil.ini.php');
+      $ini = new jIniFileModifier($monfichier);
+    }
+
     // Save the data
     foreach ( $form->getControls() as $ctrl ) {
         if ( $ctrl->type != 'submit' ){
             $val = $form->getData( $ctrl->ref );
-            $this->ini->setValue( $ctrl->ref, $val, 'altiProfil' );
+            $ini->setValue( $ctrl->ref, $val, 'altiProfil' );
         }
     }
-    $this->ini->save();
+    $ini->save();
 
     // Redirect to the validation page
     $rep= $this->getResponse("redirect");

@@ -3,6 +3,7 @@ altisource=Source des données
 
 ;si cas database
 ;altiProfileProvider=database
+altiProfileSchema=dem_schema
 altiProfileTable=dem_table
 srid=3957
 ; profilUnit = PERCENT or DEGREES - choix de l'unité de calcul du profil
