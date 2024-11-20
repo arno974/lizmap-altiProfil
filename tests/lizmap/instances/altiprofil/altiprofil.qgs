@@ -1395,7 +1395,7 @@
 &lt;li&gt;Click on `Modify` button&lt;/li&gt;
 &lt;li&gt;Choose `PostgreSQL database table` for `Altitude provider`&lt;/li&gt;
 &lt;li&gt;Put `5` for `Resolution`&lt;/li&gt;
-&lt;li&gt;Enter `raster.rgealti_5m_mtp` for `Database table`&lt;/li&gt;
+&lt;li&gt;Enter `raster` for `Database schema` and `rgealti_5m_mtp` for `Database table`&lt;/li&gt;
 &lt;li&gt;Put `2154` for `SRID`&lt;/li&gt;
 &lt;li&gt;Save, get back to map and do the same steps as with the IGN API&lt;/li&gt;
 &lt;/ol&gt;

@@ -4,7 +4,6 @@ namespace AltiProfil;
 Class AltiServicesFromDB {
 
     protected $Srid = "";
-    protected $AltiProfileTable = "";
     protected $Altisource = "";
     protected $profilUnit = "";
     protected $repository = Null;
@@ -19,7 +18,6 @@ Class AltiServicesFromDB {
     {
         $this->config = $altiConfig;
         $this->Srid = $altiConfig->getSrid();
-        $this->AltiProfileTable = $altiConfig->getAltiProfileTable();
         $this->Altisource = $altiConfig->getAltisource();
         $this->profilUnit = $altiConfig->getProfilUnit();
         $this->AltiResolution = $altiConfig->getAltiResolution();
@@ -27,26 +25,8 @@ Class AltiServicesFromDB {
         // Get project config: override table and source per project
         $this->repository = $repository;
         $this->project = $project;
-        $p = \lizmap::getProject($repository.'~'.$project);
-        if( $p ){
-            $alti_config_file = $p->getQgisPath() . '.alti';
-            if (file_exists($alti_config_file)) {
-                $config = parse_ini_file($alti_config_file, True);
-                if ($config and array_key_exists('altiProfil', $config)) {
-                    if (array_key_exists('srid', $config['altiProfil'])) {
-                        $this->Srid = $config['altiProfil']['srid'];
-                    }
-                    if (array_key_exists('altiProfileTable', $config['altiProfil'])) {
-                        $this->AltiProfileTable = $config['altiProfil']['altiProfileTable'];
-                    }
-                    if (array_key_exists('altisource', $config['altiProfil'])) {
-                        $this->Altisource = $config['altiProfil']['altisource'];
-                    }
-                }
-            }
-        }
+        $this->config->setProjectConfig($repository, $project);
     }
-
 
     /**
      * Get alti from one point based on database
@@ -63,16 +43,16 @@ Class AltiServicesFromDB {
 
         $sql = sprintf('
             SELECT ST_Value(
-                "%1$s".rast,
+                r.rast,
                 ST_Transform(ST_SetSRID(ST_MakePoint(%2$f,%3$f),4326),%4$s)
             ) as z
-            FROM "%1$s"
+            FROM %1$s r
             WHERE ST_Intersects(
-                "%1$s".rast,
+                r.rast,
                 ST_Transform(ST_SetSRID(ST_MakePoint(%2$f,%3$f),4326),%4$s)
 
         )',
-            $this->AltiProfileTable,
+            $this->config->quotedSchemaTableName(),
             $lon,
             $lat,
             $this->Srid
@@ -134,10 +114,10 @@ Class AltiServicesFromDB {
                     -- Get DEM elevation for each
                     SELECT
                         p.geom AS geom,
-                        ST_Value("%1$s".rast, 1, p.geom) AS val,
+                        ST_Value(r.rast, 1, p.geom) AS val,
                         resolution
-                    FROM "%1$s", points2d p
-                    WHERE ST_Intersects("%1$s".rast, p.geom)
+                    FROM %1$s r, points2d p
+                    WHERE ST_Intersects(r.rast, p.geom)
                 ),
                 -- Instantiate 3D points
                 points3d AS (
@@ -157,7 +137,7 @@ Class AltiServicesFromDB {
                 )
             -- Build 3D line from 3D points
             SELECT loc AS x, ST_Z(geom) as y, ST_X(geom) as lon, ST_Y(geom) as lat, resolution FROM xz',
-            $this->AltiProfileTable,
+            $this->config->quotedSchemaTableName(),
             $p1Lon, $p1Lat,
             $this->Srid,
             $p2Lon, $p2Lat,
@@ -189,9 +169,9 @@ Class AltiServicesFromDB {
                     AS geom
                 ), RasterCells AS (
                     -- Intersect the line with the DEM
-                    SELECT ST_Clip("%1$s".rast, line.geom, -9999, TRUE) as rast
-                    FROM "%1$s", line
-                    WHERE ST_Intersects("%1$s".rast, line.geom)
+                    SELECT ST_Clip(r.rast, line.geom, -9999, TRUE) as rast
+                    FROM %1$s r, line
+                    WHERE ST_Intersects(r.rast, line.geom)
                 ), rasterSlopStat AS (
                     -- Compute the slope and the statistics
                     Select (ST_SummaryStatsAgg(ST_Slope(rast, 1, \'32BF\', \'%7$s\', 1.0), 1, TRUE, 1)).*
@@ -204,7 +184,7 @@ Class AltiServicesFromDB {
                         FROM rasterSlopStat
 
             ',
-            $this->AltiProfileTable,
+            $this->config->quotedSchemaTableName(),
             $p1Lon, $p1Lat,
             $this->Srid,
             $p2Lon, $p2Lat,

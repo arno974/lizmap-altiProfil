@@ -55,7 +55,7 @@ Go to the configuration part.
 * Modules need to be enabled in Lizmap by editing the configuration file `lizmap/var/config`.
 
 
-For Lizmap 3.4 or Lizmap 3.5, add in the file `lizmap/var/config/localconfig.ini.php`, in the `[module]` section, 
+For Lizmap 3.4 or Lizmap 3.5, add in the file `lizmap/var/config/localconfig.ini.php`, in the `[module]` section,
 the reference to these 2 modules. Do not remove references to other modules in this section.
 
 ```ini
@@ -83,7 +83,7 @@ lizmap/install/set_rights.sh
 
 ## Configuration
 
-It's necessary to go in the administration panel of Lizmap Web Client to set up the module. 
+It's necessary to go in the administration panel of Lizmap Web Client to set up the module.
 
 ![Administration panel](altiProfilAdmin.png)
 
@@ -95,6 +95,7 @@ altisource=Source of data
 
 ;if database
 altiProfileProvider=database
+altiProfileSchema=dem_schema
 altiProfileTable=dem_table
 srid=3957
 ; profilUnit = PERCENT or DEGREES - unit for the profil
@@ -126,7 +127,7 @@ altiProfileProvider=ign
 ## Override the configuration for a single project
 
 For every project published in Lizmap, for instance `my_project.qgs`, you can add a new file with extension `.alti` at the end of the file.
-In our example, it would be `my_project.qgs.alti`. 
+In our example, it would be `my_project.qgs.alti`.
 
 This file allows you to override some settings.
 
@@ -135,6 +136,7 @@ For instance
 ```ini
 [altiProfil]
 altisource="DEM Paris high-resolution"
+altiProfileSchema=srtm
 altiProfileTable=srtm_paris_high_resolution
 srid=3857
 ```

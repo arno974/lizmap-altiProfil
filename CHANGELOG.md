@@ -12,6 +12,8 @@ with some extra keywords : backend, tests, test, translation, funders, important
 
 ### Changed
 
+* Allow define raster table schema name
+
 ## 0.5.5 - 2024-10-24
 
 ### Fixed
