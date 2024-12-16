@@ -14,6 +14,15 @@ with some extra keywords : backend, tests, test, translation, funders, important
 
 ### Changed
 
+## 0.5.7 - 2024-12-16
+
+### Fixed
+
+* Fix fatal error when DB connection fails on admin
+
+### Added
+
+* Add German language, contribution from @meyerlor
 
 ## 0.5.6 - 2024-11-20
 
