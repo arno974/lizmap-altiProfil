@@ -14,6 +14,11 @@ with some extra keywords : backend, tests, test, translation, funders, important
 
 ### changed
 
+## 0.4.5 - 2024-12-16
+
+### Fixed
+
+* Fix fatal error when DB connection fails on admin
 
 ## 0.4.4 - 2024-11-20
 
