@@ -130,7 +130,7 @@ class AltiConfig
           $qResult = $cnx->query( $sql);
           return true;
         } catch (\Exception $e) {
-             jLog::log("AltiProfil Admin :: ".$e->getMessage());
+             \jLog::log("AltiProfil Admin :: ".$e->getMessage());
         }
         return false;
     }
