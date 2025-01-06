@@ -39,8 +39,8 @@ function getAlti(lon,lat, numFeat){
         'project': lizUrls.params.project
     }
     getAltiJsonResponse(qParams, function(data){
-        var alt = data['elevations'][0]['z'];
-        $('#altiProfil .menu-content #alt-p'+numFeat).html( alt );
+        var alt = Number(data['elevations'][0]['z']).toFixed(2);
+        $('#altiProfil .menu-content #alt-p'+numFeat).html( alt + " m" );
     });
 }
 
@@ -120,7 +120,7 @@ function getProfil(p1,p2){
                 yref:'paper',
                 y: 1.16,
                 showarrow: false,
-                text: `point 1 (${Math.round(p1coord[0])},${Math.round(p1coord[1])}) | point 2 (${Math.round(p2coord[0])},${Math.round(p2coord[1])})`
+                text: `point 1 (${Math.round(p1coord[0])}, ${Math.round(p1coord[1])}) | point 2 (${Math.round(p2coord[0])}, ${Math.round(p2coord[1])})`
             },{
                 font: {
                     size: 10
