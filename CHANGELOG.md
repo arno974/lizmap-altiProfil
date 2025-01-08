@@ -12,6 +12,9 @@ with some extra keywords : backend, tests, test, translation, funders, important
 
 ### Fixed
 
+* Limit amount of decimals in altitude display to 2
+* Better display of coordinates, with units
+
 ### changed
 
 ## 0.4.5 - 2024-12-16
