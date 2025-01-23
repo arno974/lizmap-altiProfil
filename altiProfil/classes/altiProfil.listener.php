@@ -88,14 +88,20 @@ class altiProfilListener extends jEventListener{
             // Add Dataviz if not already available
             if ( !$this->getDatavizStatus($event) ) {
 
+                // old LWC version ?
                 if (file_exists(jApp::wwwPath('js/dataviz/plotly-latest.min.js'))) {
                     $js[] = $bp.'js/dataviz/plotly-latest.min.js';
                     $js[] = $bp.'js/dataviz/dataviz.js';
-                }
-                if (file_exists(jApp::wwwPath('assets/js/dataviz/plotly-latest.min.js'))) {
+                } elseif (file_exists(jApp::wwwPath('assets/js/dataviz/plotly-latest.min.js'))) {
+                    // LWC 3.6, 3.7, <3.84
                     $js[] = $bp.'assets/js/dataviz/plotly-latest.min.js';
                     $js[] = $bp.'assets/js/dataviz/dataviz.js';
+                } elseif (file_exists(jApp::wwwPath('assets/js/dataviz/plotly-custom.min.js'))) {
+                    // since LWC 3.8.4 plotly asset is 'plotly-custom'
+                    $js[] = $bp.'assets/js/dataviz/plotly-custom.min.js';
+                    $js[] = $bp.'assets/js/dataviz/dataviz.js';
                 }
+                // add lang
                 if (file_exists(jApp::wwwPath('assets/js/dataviz/plotly-locale-'.$locale.'-latest.js'))) {
                     $js[] = $bp.'assets/js/dataviz/plotly-locale-'.$locale.'-latest.js';
                 }
