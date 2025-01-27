@@ -93,7 +93,7 @@ class altiProfilListener extends jEventListener{
                     $js[] = $bp.'js/dataviz/plotly-latest.min.js';
                     $js[] = $bp.'js/dataviz/dataviz.js';
                 } elseif (file_exists(jApp::wwwPath('assets/js/dataviz/plotly-latest.min.js'))) {
-                    // LWC 3.6, 3.7, <3.84
+                    // LWC 3.6, 3.7, <3.8.4
                     $js[] = $bp.'assets/js/dataviz/plotly-latest.min.js';
                     $js[] = $bp.'assets/js/dataviz/dataviz.js';
                 } elseif (file_exists(jApp::wwwPath('assets/js/dataviz/plotly-custom.min.js'))) {
