@@ -10,6 +10,14 @@ with some extra keywords : backend, tests, test, translation, funders, important
 
 ### Fixed
 
+## 0.5.9 - 2025-27-01
+
+### Fixed
+
+* new data-ploty js filenames for LWC>3.8.4
+* bug when using IGN as provider
+* use proper Lizmap Proxy class
+
 ## 0.5.8 - 2025-01-08
 
 ### Fixed
