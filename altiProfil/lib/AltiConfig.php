@@ -47,7 +47,7 @@ class AltiConfig
         }
 
         $values = parse_ini_file($alti_config_file, true, INI_SCANNER_TYPED);
-        if (!$values || !array_key_exists('altiProfil', $config)) {
+        if (!$values || !array_key_exists('altiProfil', $values)) {
             return false;
         }
 
