@@ -5,6 +5,7 @@ Class AltiServicesFromDB {
 
     protected $Srid = "";
     protected $Altisource = "";
+    protected $AltiResolution = "";
     protected $profilUnit = "";
     protected $repository = Null;
     protected $project = Null;

@@ -142,7 +142,7 @@ function getProfil(p1,p2){
             var _resolution = data[0]['resolution'];
             var _slope = data[0]['slope'];
 
-            layout['title'] = '<b>Profil ('+ LOCALES_ALTI_RESOLUTION +' ' +_resolution+ 'm)';
+            layout['title'] = '<b>'+LOCALES_ALTI_PROFIL+' ('+ LOCALES_ALTI_RESOLUTION +' ' +_resolution+ 'm)';
             layout['annotations'].push(
                 {
                     font: {

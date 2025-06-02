@@ -129,16 +129,14 @@ altiProfileProvider=ign
 For every project published in Lizmap, for instance `my_project.qgs`, you can add a new file with extension `.alti` at the end of the file.
 In our example, it would be `my_project.qgs.alti`.
 
-This file allows you to override some settings.
+This file allows you to override schema and table settings (when altiProfil is configued to use database as data source).
 
 For instance
 
 ```ini
 [altiProfil]
-altisource="DEM Paris high-resolution"
 altiProfileSchema=srtm
 altiProfileTable=srtm_paris_high_resolution
-srid=3857
 ```
 
 ## Use-case from a database
