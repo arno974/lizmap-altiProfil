@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module xmlns="http://jelix.org/ns/module/1.0">
     <info id="altiProfil" name="altiProfil" createdate="2020-03-12">
-        <version date="2025-01-27">0.5.9</version>
+        <version date="2025-06-18">0.5.10</version>
         <label lang="en_US">altiProfil</label>
         <description lang="en_US" />
         <license URL="https://spdx.org/licenses/GPL-3.0-or-later.html">GNU GPLv3</license>
         <copyright>2020-2025 GEOLAB</copyright>
         <creator name="arnaud Vandecasteele" email="arnaud [dot] vdc [at] geolab [dot] re" />
         <contributor name="3Liz" email="info@3liz.com"/>
-        <homepageURL>http://geolab.re</homepageURL>
+        <homepageURL>https://geolab.re</homepageURL>
     </info>
     <dependencies>
         <module name="lizmap" minversion="3.8.0" maxversion="3.9.*" />

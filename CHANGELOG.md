@@ -10,7 +10,19 @@ with some extra keywords : backend, tests, test, translation, funders, important
 
 ### Fixed
 
-## 0.5.9 - 2025-27-01
+## 0.5.10 - 2025-06-18
+
+### Added
+
+* Add Portuguese language, contribution from @josemvm
+
+### Fixed
+
+* Fix some PHP warnings
+* Fix project config overwrite, only for SQL table and schema and PHP fix
+* Fix unlocalized string
+
+## 0.5.9 - 2025-01-27
 
 ### Fixed
 
