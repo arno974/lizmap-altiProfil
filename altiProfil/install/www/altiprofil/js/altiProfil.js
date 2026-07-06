@@ -140,23 +140,23 @@ function getProfil(p1,p2){
         //add extra info if datasource from DB
         if ( ALTI_PROVIDER == "database"){
             var _resolution = data[0]['resolution'];
-            var _slope = data[0]['slope'];
-
             layout['title'] = '<b>'+LOCALES_ALTI_PROFIL+' ('+ LOCALES_ALTI_RESOLUTION +' ' +_resolution+ 'm)';
-            layout['annotations'].push(
-                {
-                    font: {
-                        size: 11
-                    },
-                    align:'center',
-                    xref:'paper',
-                    yref:'paper',
-                    y: 1.10,
-                    showarrow:false,
-                    text: `${LOCALES_ALTI_SLOPE} ${LOCALES_ALTI_UNIT}  min :  ${_slope.min_slope} | max : ${_slope.max_slope} | ${LOCALES_ALTI_MEAN} : ${_slope.mean_slope}`
-                }
-            )
         }
+        var _slope = data[0]['slope'];
+
+        layout['annotations'].push(
+            {
+                font: {
+                    size: 11
+                },
+                align:'center',
+                xref:'paper',
+                yref:'paper',
+                y: 1.10,
+                showarrow:false,
+                text: `${LOCALES_ALTI_SLOPE} ${LOCALES_ALTI_UNIT}  min :  ${_slope.min_slope} | max : ${_slope.max_slope} | ${LOCALES_ALTI_MEAN} : ${_slope.mean_slope}`
+            }
+        )
 
         var profilLine = {
             x: _x,

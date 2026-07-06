@@ -10,13 +10,11 @@
     
     var ALTI_PROVIDER = "{$altiProvider}";
 
-    {if $altiProvider == "database"}      
-      {if $profilUnit == "DEGREES"}
-        var LOCALES_ALTI_UNIT = "{@altiProfil~altiProfil.alti.degrees@}";
-      {elseif $profilUnit == "PERCENT"}
-        var LOCALES_ALTI_UNIT = "{@altiProfil~altiProfil.alti.percent@}";
-      {/if}     
-    {/if}   
+    {if $profilUnit == "DEGREES"}
+      var LOCALES_ALTI_UNIT = "{@altiProfil~altiProfil.alti.degrees@}";
+    {elseif $profilUnit == "PERCENT"}
+      var LOCALES_ALTI_UNIT = "{@altiProfil~altiProfil.alti.percent@}";
+    {/if}
     var LOCALES_ALTI_MEAN = "{@altiProfil~altiProfil.alti.mean@}";  
     var LOCALES_ALTI_DATASOURCE = "{@altiProfil~altiProfil.alti.datasource@}";  
   

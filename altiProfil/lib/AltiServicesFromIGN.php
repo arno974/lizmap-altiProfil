@@ -141,6 +141,13 @@ Class AltiServicesFromIGN
         }';
         $code = 200;*/
 
+        if ($this->config->getProfilUnit() == 'DEGREES') {
+            $slopeUnitFn = function ($v) { return self::degreeSlope($v);};
+        } else {
+            // default : percent
+            $slopeUnitFn = function ($v) { return self::percentSlope($v);};
+        }
+
         if ($code == 200) {
             $ignProfilResponse = json_decode($data);
             $x = array();
@@ -149,25 +156,50 @@ Class AltiServicesFromIGN
             $resolution = "";
             $i=0;
             $distanceStep  = ($distance/$sampling);
+            $previousZ = null;
+            $slopes = [];
             foreach($ignProfilResponse->elevations as $key => $value) {
-                    $x[] = $i*$distanceStep;
-                    $y[] = $value->z;
-                    $customdata[] = [["lon" => $value->lon, "lat" => $value->lat]];
-                    $i = $i+1;
+                $x[] = $i * $distanceStep;
+                $y[] = $value->z;
+                $currentZ = $value->z;
+                if (!is_null($previousZ)) {
+                    $slopes[] = $slopeUnitFn(abs($currentZ - $previousZ) / $distanceStep);
+                }
+                $customdata[] = [["lon" => $value->lon, "lat" => $value->lat]];
+                $i = $i + 1;
+                $previousZ = $currentZ;
             }
+            $slopeData = [
+                'min_slope' => min($slopes),
+                'max_slope' => max($slopes),
+                'mean_slope' => round(array_sum($slopes) / count($slopes), 2),
+            ];
             $data = [ [
                 "x" => $x,
                 "y" => $y,
                 "customdata" => $customdata,
                 "srid" => 4326,
                 "altisource" => $this->config->getAltisource(),
-                "source" => 'IGN'
-             ] ];
+                "source" => 'IGN',
+                "slope" => $slopeData,
+            ]];
+
             return $data;
         }else{
             $errorMsg = "AltiProfil IGN wrong request";
             \jLog::log($errorMsg);
             return array("error msg" => $data);
         }
+    }
+
+    private static function degreeSlope($slope) {
+        // atan() : angle in grad
+        // 180 * atan / π = convert grad to degree
+
+        return round(180 * (atan($slope)/ pi()), 2);
+    }
+
+    private static function percentSlope($slope) {
+        return round(100 * $slope, 2);
     }
 }
