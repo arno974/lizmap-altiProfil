@@ -161,10 +161,10 @@ class configCtrl extends jController {
 
     // Save the data
     foreach ( $form->getControls() as $ctrl ) {
-        if ( $ctrl->type != 'submit' ){
-            $val = $form->getData( $ctrl->ref );
-            $ini->setValue( $ctrl->ref, $val, 'altiProfil' );
-        }
+        if ( $ctrl->type == 'submit' ){ continue; }
+        $val = $form->getData( $ctrl->ref );
+        if (!\AltiProfil\AltiConfig::isValidValue($ctrl->ref, $val)) { continue; }
+        $ini->setValue( $ctrl->ref, $val, 'altiProfil' );
     }
     $ini->save();
 
