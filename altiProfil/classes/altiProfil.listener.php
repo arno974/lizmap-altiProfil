@@ -13,7 +13,9 @@ class altiProfilListener extends jEventListener{
         $tpl = new jTpl();
         $provider = $this->config->getProvider();
         $tpl->assign("altiProvider", $provider) ;
-        $tpl->assign("profilUnit", $this->config->getProfilUnit());
+        if ($provider == 'database' ){
+            $tpl->assign("profilUnit", $this->config->getProfilUnit());
+        }
 
         $dockable = new lizmapMapDockItem(
             'altiProfil',
