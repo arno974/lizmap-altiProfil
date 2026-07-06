@@ -6,6 +6,21 @@ class AltiConfig
 
     protected $parameters = array();
 
+    /**
+     * List of keys that can be overridden in the project configuration file
+     */
+    private const DEFAULTS_VALUES = array(
+          'altisource'          => '',
+          'altiProfileSchema'   => '',
+          'altiProfileTable'    => '',
+          'altiProfileProvider' => 'ign',
+          'ignServiceUrl'       => 'https://data.geopf.fr/altimetrie/1.0/calcul',
+          'dock'                => 'dock',
+          'srid'                => '2975',
+          'profilUnit'          => 'PERCENT',
+          'altiresolution'      => 54,
+    );
+
     function __construct()
     {
         if (method_exists('jApp', 'varConfigPath')) {
@@ -14,38 +29,49 @@ class AltiConfig
         } else {
             $altiProfilConfigFile = \jApp::configPath('altiProfil.ini.php');
         }
-        $defaultValues =  array(
-            'altisource' => '',
-            'altiProfileSchema' => '',
-            'altiProfileTable' => '',
-            'altiProfileProvider'=>'ign',
-            'ignServiceUrl' => 'https://data.geopf.fr/altimetrie/1.0/calcul',
-            'dock'=>'dock',
-            'srid'=>'3857',
-            'profilUnit'=>'PERCENT',
-            'altiresolution'=>25
-        );
+
         $values = parse_ini_file($altiProfilConfigFile, true, INI_SCANNER_TYPED);
         if ($values && array_key_exists('altiProfil', $values)) {
-            $this->parameters = array_merge($defaultValues, $values['altiProfil']);
+            $this->parameters = array_merge(self::DEFAULTS_VALUES, $values['altiProfil']);
         } else {
-            $this->parameters = $defaultValues;
+            $this->parameters = self::DEFAULTS_VALUES;
         }
     }
 
-    private static $allowedProjectOverrideKeys = array(
-        'altiProfileProvider', 
-        'altisource',
-        'altiresolution',
-        'profilUnit',
-        'dock',
+    /**
+     * Check value that can be overridden in the project configuration file
+     */
+    public static function isValidValue($key, $value)
+    {
+        switch ($key) {
+            case 'altiProfileSchema':
+            case 'altiProfileTable':
+                return is_string($value) && preg_match('/^[a-zA-Z0-9_]+$/', $value) === 1;
 
-        'altiProfileSchema',
-        'altiProfileTable',   
-        'srid',
+            case 'srid':
+            case 'altiresolution':
+                return ctype_digit((string) $value);   // gere le int de INI_SCANNER_TYPED
 
-        'ignServiceUrl'
-    );
+            case 'altiProfileProvider':
+                return in_array($value, array('ign', 'database'), true);
+
+            case 'profilUnit':
+                return in_array($value, array('PERCENT', 'DEGREES'), true);
+
+            case 'dock':
+                return in_array($value, array('dock', 'minidock', 'rightdock'), true);
+
+            case 'ignServiceUrl':
+                 return filter_var((string) $value, FILTER_VALIDATE_URL) !== false;
+                 
+            case 'altisource':
+                return is_string($value) && $value === strip_tags($value);
+
+            default:
+                return false;
+        }
+    }
+
 
     public function setProjectConfig($repository, $project)
     {
@@ -66,13 +92,13 @@ class AltiConfig
 
         // Only read keys that are allowed to be overridden in the project configuration file
         foreach ($values['altiProfil'] as $key => $value) {
-            if (!in_array($key, self::$allowedProjectOverrideKeys, true)) {
-                \jLog::log("AltiProfil :: cle '$key' ignoree dans le fichier .alti (non autorisee)");
-                continue;
-            }
-            if (!is_string($value) || !preg_match('/^[a-zA-Z0-9_]+$/', $value)) {
-                \jLog::log("AltiProfil :: valeur invalide pour '$key' dans le fichier .alti, ignoree");
-                continue;
+            if (!array_key_exists($key, self::DEFAULTS_VALUES)) { 
+                \jLog::log("AltiProfil :: clé '$key' invalide dans .alti, ignoree");
+                continue; 
+            } 
+            if (!self::isValidValue($key, $value)) { 
+                \jLog::log("AltiProfil :: valeur invalide pour '$key' dans .alti, ignoree");
+                continue; 
             }
             $this->parameters[$key] = $value;
         }
