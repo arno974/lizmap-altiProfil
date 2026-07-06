@@ -24,7 +24,6 @@ class AltiConfig
             'srid'=>'3857',
             'profilUnit'=>'PERCENT',
             'altiresolution'=>25
-
         );
         $values = parse_ini_file($altiProfilConfigFile, true, INI_SCANNER_TYPED);
         if ($values && array_key_exists('altiProfil', $values)) {
@@ -33,6 +32,20 @@ class AltiConfig
             $this->parameters = $defaultValues;
         }
     }
+
+    private static $allowedProjectOverrideKeys = array(
+        'altiProfileProvider', 
+        'altisource',
+        'altiresolution',
+        'profilUnit',
+        'dock',
+
+        'altiProfileSchema',
+        'altiProfileTable',   
+        'srid',
+
+        'ignServiceUrl'
+    );
 
     public function setProjectConfig($repository, $project)
     {
@@ -51,7 +64,18 @@ class AltiConfig
             return false;
         }
 
-        $this->parameters = array_merge($this->parameters, $values['altiProfil']);
+        // Only read keys that are allowed to be overridden in the project configuration file
+        foreach ($values['altiProfil'] as $key => $value) {
+            if (!in_array($key, self::$allowedProjectOverrideKeys, true)) {
+                \jLog::log("AltiProfil :: cle '$key' ignoree dans le fichier .alti (non autorisee)");
+                continue;
+            }
+            if (!is_string($value) || !preg_match('/^[a-zA-Z0-9_]+$/', $value)) {
+                \jLog::log("AltiProfil :: valeur invalide pour '$key' dans le fichier .alti, ignoree");
+                continue;
+            }
+            $this->parameters[$key] = $value;
+        }
         return true;
     }
 
