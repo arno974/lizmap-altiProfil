@@ -41,7 +41,7 @@ Class AltiServicesFromIGN
         $urlAltiIGN = $this->config->getIgnServiceUrl($APIRestElev, $data);
 
         list($data, $mime, $code) = \Lizmap\Request\Proxy::getRemoteData($urlAltiIGN);
-        $code = 200;
+        //$code = 200;
         if ($code == 200) {
             //DATA SHOULD BE LIKE '{"elevations":[{"x":55.38025625,"y":-21.14050849,"z":2154.75,"acc":2.5}]}'
             /* FOR TESTING
