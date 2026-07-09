@@ -54,8 +54,9 @@ class ajaxCtrl extends jController
 
         //check first for access to the project, if not return 403
         if (!$this->checkProjectAccess($repository, $project)) {
-            $rep->setHttpStatus(403, 'Forbidden');
-            return $this->errorMsg("Access denied to this repository/project");
+            $rep = $this->errorMsg("Access denied to this repository/project");
+            $rep->setHttpStatus(403, \Lizmap\Request\Proxy::getHttpStatusMsg(403));
+            return $rep;
         }  
 
         $altiConfig = new \AltiProfil\AltiConfig();
@@ -87,8 +88,9 @@ class ajaxCtrl extends jController
 
         //check first for access to the project, if not return 403
         if (!$this->checkProjectAccess($repository, $project)) {
-            $rep->setHttpStatus(403, 'Forbidden');
-            return $this->errorMsg("Access denied to this repository/project");
+            $rep = $this->errorMsg("Access denied to this repository/project");
+            $rep->setHttpStatus(403, \Lizmap\Request\Proxy::getHttpStatusMsg(403));
+            return $rep;
         }
 
         $altiConfig = new \AltiProfil\AltiConfig();
