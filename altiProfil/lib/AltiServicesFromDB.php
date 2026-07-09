@@ -98,13 +98,13 @@ Class AltiServicesFromDB {
                             ST_Length(line.geom)::int,
                             --for very long line we reduce the steps
                             CASE
-                                WHEN ST_Length(line.geom)::int < 1000 THEN %8$d
-                                ELSE %8$d*5
+                                WHEN ST_Length(line.geom)::int < 1000 THEN %8$s
+                                ELSE %8$s*5
                             END
                         ) as i,
                         CASE
-                            WHEN ST_Length(line.geom)::int < 1000 THEN %8$d
-                            ELSE %8$d*5
+                            WHEN ST_Length(line.geom)::int < 1000 THEN %8$s
+                            ELSE %8$s*5
                         END as resolution
                     FROM line
                 ),
@@ -143,7 +143,7 @@ Class AltiServicesFromDB {
             $this->Srid,
             $p2Lon, $p2Lat,
             $this->profilUnit,
-            $this->AltiResolution,
+            number_format((float) $this->AltiResolution, 2, '.', '')
         );
         $cnx = \jDb::getConnection('altiProfil');
         $qResult = $cnx->query($sql);
