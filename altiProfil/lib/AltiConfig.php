@@ -16,9 +16,9 @@ class AltiConfig
           'altiProfileProvider' => 'ign',
           'ignServiceUrl'       => 'https://data.geopf.fr/altimetrie/1.0/calcul',
           'dock'                => 'dock',
-          'srid'                => '2975',
+          'srid'                => '3857',
           'profilUnit'          => 'PERCENT',
-          'altiresolution'      => 54,
+          'altiresolution'      => 25,
     );
 
     function __construct()
@@ -49,8 +49,10 @@ class AltiConfig
                 return is_string($value) && preg_match('/^[a-zA-Z0-9_]+$/', $value) === 1;
 
             case 'srid':
+                return ctype_digit((string) $value);
+
             case 'altiresolution':
-                return ctype_digit((string) $value);   // gere le int de INI_SCANNER_TYPED
+                return is_numeric($value) && (float) $value > 0;
 
             case 'altiProfileProvider':
                 return in_array($value, array('ign', 'database'), true);
