@@ -79,6 +79,14 @@ class ajaxCtrl extends jController
     }
 
     /**
+     * Check input parameters for profil
+    **/
+    protected function checkProfilParams($sampling, $distance){
+        return is_numeric($sampling) && $sampling > 0
+            && is_numeric($distance) && $distance >= 0;
+    }
+
+    /**
      * Get alti from one point based on IGN or database
     **/
     public function getProfil(){
@@ -105,6 +113,9 @@ class ajaxCtrl extends jController
 
         if ( ($this->checkParams($p1Lon, $p1Lat)) and ($this->checkParams($p2Lon, $p2Lat)) ){
             if($altiProvider == 'ign' ){
+                if (!$this->checkProfilParams($sampling, $distance)) {
+                    return $this->errorMsg("Wrong sampling/distance values");
+                }
                 $altiProviderInstance = new \AltiProfil\AltiServicesFromIGN($altiConfig);
                 $rep->data = $altiProviderInstance->getProfil($p1Lon, $p1Lat, $p2Lon, $p2Lat, $sampling, $distance);
                 return $rep;
