@@ -8,8 +8,7 @@ class ajaxCtrl extends jController
     private function errorMsg($errorMsg){
         $rep = $this->getResponse('json');
         jLog::log("AltiProfil :: $errorMsg");
-        $errorMsg = '{"error msg": "'.$errorMsg.'" }';
-        $rep->data = $errorMsg;
+        $rep->data = json_encode(array('error msg' => $errorMsg));
         return $rep;
     }
 
