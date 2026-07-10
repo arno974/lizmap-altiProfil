@@ -39,24 +39,26 @@ function getAlti(lon, lat, numFeat){
         'project': lizUrls.params.project
     }
     getAltiJsonResponse(qParams, function(data){
+        if (!data || data['error msg'] || !data['elevations'] || !data['elevations'][0]) {
+            $('#altiProfil .menu-content #alt-p'+numFeat).html('-');
+            return;
+        }
         var alt = Number(data['elevations'][0]['z']).toFixed(2);
         $('#altiProfil .menu-content #alt-p'+numFeat).html( alt + " m" );
     });
 }
 
-function getProfilJsonResponse(params, aCallback){
-    $('#altiProfil .menu-content #profil-chart .spinner').show();
-    $.get(
-        URLAJAXALTIPROFIL,
-        params,
-        function(data) {
-            if(aCallback){
-                    aCallback(data);
-            }
-        }
-        ,'json'
-    );
-}
+  function getProfilJsonResponse(params, aCallback){
+      var $spinner = $('#altiProfil .menu-content #profil-chart .spinner');
+      $spinner.show();
+      $.get(URLAJAXALTIPROFIL, params, function(data){
+          if(aCallback){ aCallback(data); }
+      }, 'json')
+      .fail(function(){
+          $spinner.hide();
+          $('#altiProfil .menu-content span').html(LOCALES_ALTI_ERROR_REQUEST);
+      });
+  }
 
 function resizePlot(id){
     $('#'+id)
@@ -65,6 +67,12 @@ function resizePlot(id){
         margin: '0px'
     });
     Plotly.Plots.resize($('#'+id)[0]);
+}
+
+function escapeHtml(s){
+    return String(s)
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;').replace(/'/g, '&#039;');
 }
 
 function getProfil(p1,p2){
@@ -95,6 +103,11 @@ function getProfil(p1,p2){
     }
 
     getProfilJsonResponse(qParams, function(data){
+        if (!data || data['error msg'] || !Array.isArray(data) || !data[0]) {
+            $('#altiProfil .menu-content #profil-chart .spinner').hide();
+            $('#altiProfil .menu-content span').html(LOCALES_ALTI_ERROR_PROFIL);
+            return;
+        }
         var _x = data[0]['x'];
         var _y = data[0]['y'];
         var _customdata = data[0]['customdata'];
@@ -131,7 +144,7 @@ function getProfil(p1,p2){
                 x: -0.02,
                 y: -0.21,
                 showarrow: false,
-                text: `<i>${LOCALES_ALTI_DATASOURCE} : ${_altisource}</i>`
+                text: `<i>${LOCALES_ALTI_DATASOURCE} : ${escapeHtml(_altisource)}</i>`
             }],
             showlegend: false,
             autosize: true
