@@ -7,6 +7,8 @@
     var LOCALES_ALTI_ELEVATION = "{@altiProfil~altiProfil.alti.elevation@}";
     var LOCALES_ALTI_RESOLUTION = "{@altiProfil~altiProfil.alti.resolution@}";
     var LOCALES_ALTI_SLOPE = "{@altiProfil~altiProfil.alti.slope@}";
+    var LOCALES_ALTI_ERROR_PROFIL = "{@altiProfil~altiProfil.alti.error.profil@}";
+    var LOCALES_ALTI_ERROR_REQUEST = "{@altiProfil~altiProfil.alti.error.request@}";
     
     var ALTI_PROVIDER = "{$altiProvider}";
 
