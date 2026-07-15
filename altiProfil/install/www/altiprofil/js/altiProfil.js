@@ -171,8 +171,35 @@ function getProfil(p1,p2){
             )
         }
 
+        // Locate the highest and lowest samples to highlight them on the chart
+        let iMin = -1, iMax = -1;
+        for (let k = 0; k < _y.length; k++) {
+            if (_y[k] === null) continue;
+            const v = Number(_y[k]);
+            if (isNaN(v)) continue;
+            if (iMax === -1 || v > Number(_y[iMax])) iMax = k;
+            if (iMin === -1 || v < Number(_y[iMin])) iMin = k;
+        }
+        
+        if (iMax !== -1) {
+            layout.annotations.push(
+                { x: _x[iMax], y: _y[iMax], text: '▲ ' + Number(_y[iMax]).toFixed(0) + ' m',
+                    showarrow: true, arrowhead: 6, ax: 0, ay: -30,
+                    font: { color: '#d62728', size: 11 } 
+                }
+            );            
+        }
+        if (iMin !== iMax) {
+            layout.annotations.push(
+                { x: _x[iMin], y: _y[iMin], text: '▼ ' + Number(_y[iMin]).toFixed(0) + ' m',
+                    showarrow: true, arrowhead: 6, ax: 0, ay: 30,
+                    font: { color: '#1f77b4', size: 11 } 
+                }
+            );
+        }
+
         const slopeHover = (ALTI_PROVIDER == "database") ? ` <b>Pente</b> : %{customdata[0].slope:.1f}${LOCALES_ALTI_UNIT_ABRV}`: '';
-        var profilLine = {
+        var profilLine = [{
             x: _x,
             y: _y,
             customdata:_customdata,
@@ -182,8 +209,7 @@ function getProfil(p1,p2){
               width: 1
             }
             ,hovertemplate: `<b>Altitude</b>: %{y}${slopeHover}<br /><b>lon</b> : %{customdata[0].lon:.2f} / <b>lat</b> : %{customdata[0].lat:.2f}<extra></extra>`
-        };
-        var data = [profilLine];
+        }];
 
         var plotLocale = lizMap.config.datavizLayers.locale.substr(0,2).toLowerCase();
         var config = {
@@ -202,13 +228,13 @@ function getProfil(p1,p2){
                 'resetScale2d', 'hoverClosestGl2d', 'hoverClosestPie', 'toggleHover', 'resetViews',
                 'sendDataToCloud', 'toggleSpikelines', 'resetViewMapbox', 'hoverClosestCartesian', 'hoverCompareCartesian']
           };
-        Plotly.newPlot('profil-chart-container', data, layout, config);
+        Plotly.newPlot('profil-chart-container', profilLine, layout, config);
         $('#altiProfil .menu-content #profil-chart .spinner').hide();
         var myPlot = document.getElementById('profil-chart-container');
 
         //Add a geo point on the map when hovering the chart
-        myPlot.on('plotly_hover', function(data){
-            p = data.points[0].customdata[0];
+        myPlot.on('plotly_hover', function(plotData){
+            p = plotData.points[0].customdata[0];
             let layers = lizMap.mainLizmap.map.getAllLayers();
             // searching for altiProfil layer
             layers.forEach( function (layer) {
@@ -230,7 +256,7 @@ function getProfil(p1,p2){
         });
 
         //Remove the point on the map when unhovering the chart
-        myPlot.on('plotly_unhover', function(data){
+        myPlot.on('plotly_unhover', function(){
             let layers = lizMap.mainLizmap.map.getAllLayers();
             layers.forEach( function (layer) {
                 if (layer.get('altiprofil') == true) {
