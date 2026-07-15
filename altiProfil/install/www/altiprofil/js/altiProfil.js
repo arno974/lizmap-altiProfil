@@ -114,14 +114,41 @@ function getProfil(p1,p2){
         var _srs = data[0]['srid'];
         var _altisource = data[0]['altisource'];
 
+        // Cumulative elevation gain (D+) and loss (D-) between consecutive
+        // valid samples. A null gap breaks the chain: no delta is computed
+        // across missing data. Totals depend on the sampling resolution
+        // (finer steps catch more micro-relief and increase both values).
+        let dPlus = 0, dMinus = 0, prevY = null;
+        let iMin = -1, iMax = -1, vMin = Infinity, vMax = -Infinity;
+        for (let k = 0; k < _y.length; k++) {
+            if (_y[k] === null) { prevY = null; continue; }
+            const v = Number(_y[k]);
+            if (isNaN(v)) { prevY = null; continue; }
+            if (prevY !== null) {
+                const d = v - prevY;
+                if (d > 0) { dPlus += d; } else { dMinus -= d; }
+            }
+            prevY = v;
+            if (v > vMax) { vMax = v; iMax = k; }
+            if (v < vMin) { vMin = v; iMin = k; }
+        }
+
+        const denivText = `${LOCALES_ALTI_DPLUS} : ${Math.round(dPlus)} m | ${LOCALES_ALTI_DMINUS} : ${Math.round(dMinus)} m`;
+
         var layout = {
+            font: { size: 10 },
             title: '<b>'+LOCALES_ALTI_PROFIL+'</b>',
             xaxis: {
-                title: LOCALES_ALTI_DISTANCE +' (m)',
-                showaxeslabels:false
+                title: {
+                    text: LOCALES_ALTI_DISTANCE +' (m)',
+                    font: { size: 12 }
+                }
             },
             yaxis: {
-                title: LOCALES_ALTI_ELEVATION
+                title: {
+                    text: LOCALES_ALTI_ELEVATION,
+                    font: { size: 12 }
+                }
             },
             hovermode:'closest',
             annotations: [{
@@ -134,6 +161,18 @@ function getProfil(p1,p2){
                 y: 1.16,
                 showarrow: false,
                 text: `point 1 (${Math.round(p1coord[0])}, ${Math.round(p1coord[1])}) | point 2 (${Math.round(p2coord[0])}, ${Math.round(p2coord[1])})`
+            },{
+                font: {
+                    size: 10
+                },
+                align:'right',
+                xref:'paper',
+                yref:'paper',
+                x: 1.02,
+                y: -0.21,
+                xanchor: 'right',
+                showarrow: false,
+                text: denivText
             },{
                 font: {
                     size: 10
@@ -171,16 +210,6 @@ function getProfil(p1,p2){
             )
         }
 
-        // Locate the highest and lowest samples to highlight them on the chart
-        let iMin = -1, iMax = -1;
-        for (let k = 0; k < _y.length; k++) {
-            if (_y[k] === null) continue;
-            const v = Number(_y[k]);
-            if (isNaN(v)) continue;
-            if (iMax === -1 || v > Number(_y[iMax])) iMax = k;
-            if (iMin === -1 || v < Number(_y[iMin])) iMin = k;
-        }
-        
         if (iMax !== -1) {
             layout.annotations.push(
                 { x: _x[iMax], y: _y[iMax], text: '▲ ' + Number(_y[iMax]).toFixed(0) + ' m',
@@ -199,17 +228,31 @@ function getProfil(p1,p2){
         }
 
         const slopeHover = (ALTI_PROVIDER == "database") ? ` <b>Pente</b> : %{customdata[0].slope:.1f}${LOCALES_ALTI_UNIT_ABRV}`: '';
+         
         var profilLine = [{
-            x: _x,
-            y: _y,
-            customdata:_customdata,
-            mode: 'lines',
-            line: {
-              color: 'rgb(128, 0, 128)',
-              width: 1
+                // Invisible baseline at the lowest elevation: with a single trace,
+                // 'tonexty' falls back to 'tozeroy' and forces the y axis to
+                // include 0, flattening high-altitude profiles.
+                x: [_x[0], _x[_x.length - 1]],
+                y: [vMin, vMin],
+                mode: 'lines',
+                line: { width: 0 },
+                hoverinfo: 'skip',
+                showlegend: false
+            },{
+                x: _x,
+                y: _y,
+                customdata:_customdata,
+                fill: 'tonexty',
+                fillcolor: 'rgba(230, 204, 176, 0.7)',
+                mode: 'lines',
+                line: {
+                color: 'rgb(117, 66, 0)',
+                width: 1
+                }
+                ,hovertemplate: `<b>Altitude</b>: %{y}${slopeHover}<br /><b>lon</b> : %{customdata[0].lon:.2f} / <b>lat</b> : %{customdata[0].lat:.2f}<extra></extra>`
             }
-            ,hovertemplate: `<b>Altitude</b>: %{y}${slopeHover}<br /><b>lon</b> : %{customdata[0].lon:.2f} / <b>lat</b> : %{customdata[0].lat:.2f}<extra></extra>`
-        }];
+        ];
 
         var plotLocale = lizMap.config.datavizLayers.locale.substr(0,2).toLowerCase();
         var config = {
@@ -234,7 +277,7 @@ function getProfil(p1,p2){
 
         //Add a geo point on the map when hovering the chart
         myPlot.on('plotly_hover', function(plotData){
-            p = plotData.points[0].customdata[0];
+            const p = plotData.points[0].customdata[0];
             let layers = lizMap.mainLizmap.map.getAllLayers();
             // searching for altiProfil layer
             layers.forEach( function (layer) {
