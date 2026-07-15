@@ -185,7 +185,7 @@ Class AltiServicesFromDB {
                    ROUND(z::numeric, 2)::float8    AS y,
                    lon,
                    lat,
-                   round(step) AS resolution,
+                   round(step::numeric,1) AS resolution,
                    ROUND((
                        CASE
                            WHEN dist - LAG(dist) OVER w > 0
