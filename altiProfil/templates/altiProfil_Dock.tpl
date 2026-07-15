@@ -9,6 +9,8 @@
     var LOCALES_ALTI_SLOPE = "{@altiProfil~altiProfil.alti.slope@}";
     var LOCALES_ALTI_ERROR_PROFIL = "{@altiProfil~altiProfil.alti.error.profil@}";
     var LOCALES_ALTI_ERROR_REQUEST = "{@altiProfil~altiProfil.alti.error.request@}";
+    var LOCALES_ALTI_DPLUS = "{@altiProfil~altiProfil.alti.dplus@}";
+    var LOCALES_ALTI_DMINUS = "{@altiProfil~altiProfil.alti.dminus@}";
 
     
     var ALTI_PROVIDER = "{$altiProvider}";
