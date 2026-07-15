@@ -42,22 +42,37 @@ Class AltiServicesFromDB {
     **/
     private function queryAlti($lon, $lat) {
 
+        /**
+       * Alti SQL Query
+       *
+       * The queried point is built once in a CTE ("pt") and reused in both
+       * ST_Value and ST_Intersects, so the two can never diverge.
+       * 
+       * ST_Value uses bilinear resampling (PostGIS >= 3.2 - https://postgis.net/docs/RT_ST_Value.html): 
+       * the elevation is interpolated between the 4 neighbouring cells instead of returning
+       * the nearest cell value, which matters for sub-metric resolutions.
+       * 
+       * A point lying on a tile boundary matches several tiles, some of them
+       * returning NULL: the IS NOT NULL filter (evaluated with the default
+       * nearest resampling, more robust on tile edges) combined with LIMIT 1
+       * guarantees the tile that actually holds the value is the one returned.
+       * 
+      **/
         $sql = sprintf('
-            SELECT ST_Value(
-                r.rast,
-                ST_Transform(ST_SetSRID(ST_MakePoint(%2$f,%3$f),4326),%4$s)
-            ) as z
-            FROM %1$s r
-            WHERE ST_Intersects(
-                r.rast,
-                ST_Transform(ST_SetSRID(ST_MakePoint(%2$f,%3$f),4326),%4$s)
-
-        )',
+            WITH pt AS (
+                SELECT ST_Transform(ST_SetSRID(ST_MakePoint(%2$.8f, %3$.8f), 4326), %4$s) AS geom
+            )
+            SELECT ROUND(ST_Value(r.rast, 1, pt.geom, true, \'bilinear\')::numeric,2)::float8 AS z
+            FROM %1$s r, pt
+            WHERE ST_Intersects(r.rast, pt.geom)
+              AND ST_Value(r.rast, 1, pt.geom) IS NOT NULL
+            LIMIT 1',
             $this->config->quotedSchemaTableName(),
             $lon,
             $lat,
             $this->Srid
         );
+
         $cnx = \jDb::getConnection( 'altiProfil' );
         $qResult = $cnx->query( $sql );
         $result = array("elevations"=>[$qResult->fetch(\PDO::FETCH_ASSOC)]);
