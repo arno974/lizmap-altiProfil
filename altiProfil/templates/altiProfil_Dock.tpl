@@ -9,14 +9,18 @@
     var LOCALES_ALTI_SLOPE = "{@altiProfil~altiProfil.alti.slope@}";
     var LOCALES_ALTI_ERROR_PROFIL = "{@altiProfil~altiProfil.alti.error.profil@}";
     var LOCALES_ALTI_ERROR_REQUEST = "{@altiProfil~altiProfil.alti.error.request@}";
+
     
     var ALTI_PROVIDER = "{$altiProvider}";
-
+    var LOCALES_ALTI_UNIT_ABRV = '';
+    
     {if $altiProvider == "database"}      
       {if $profilUnit == "DEGREES"}
         var LOCALES_ALTI_UNIT = "{@altiProfil~altiProfil.alti.degrees@}";
+        var LOCALES_ALTI_UNIT_ABRV = '°';
       {elseif $profilUnit == "PERCENT"}
         var LOCALES_ALTI_UNIT = "{@altiProfil~altiProfil.alti.percent@}";
+        var LOCALES_ALTI_UNIT_ABRV = '%';
       {/if}     
     {/if}   
     var LOCALES_ALTI_MEAN = "{@altiProfil~altiProfil.alti.mean@}";  
