@@ -48,17 +48,17 @@ function getAlti(lon, lat, numFeat){
     });
 }
 
-  function getProfilJsonResponse(params, aCallback){
-      var $spinner = $('#altiProfil .menu-content #profil-chart .spinner');
-      $spinner.show();
-      $.get(URLAJAXALTIPROFIL, params, function(data){
-          if(aCallback){ aCallback(data); }
-      }, 'json')
-      .fail(function(){
-          $spinner.hide();
-          $('#altiProfil .menu-content span').html(LOCALES_ALTI_ERROR_REQUEST);
-      });
-  }
+function getProfilJsonResponse(params, aCallback){
+    var $spinner = $('#altiProfil .menu-content #profil-chart .spinner');
+    $spinner.show();
+    $.get(URLAJAXALTIPROFIL, params, function(data){
+        if(aCallback){ aCallback(data); }
+    }, 'json')
+    .fail(function(){
+        $spinner.hide();
+        $('#altiProfil .menu-content span').html(LOCALES_ALTI_ERROR_REQUEST);
+    });
+}
 
 function resizePlot(id){
     $('#'+id)
@@ -171,6 +171,7 @@ function getProfil(p1,p2){
             )
         }
 
+        const slopeHover = (ALTI_PROVIDER == "database") ? ` <b>Pente</b> : %{customdata[0].slope:.1f}${LOCALES_ALTI_UNIT_ABRV}`: '';
         var profilLine = {
             x: _x,
             y: _y,
@@ -180,10 +181,8 @@ function getProfil(p1,p2){
               color: 'rgb(128, 0, 128)',
               width: 1
             }
-            ,hovertemplate: '<b>Altitude</b>: %{y}' +
-            '<br /><b>lon</b> : %{customdata[0].lon:.2f} / <b>lat</b> : %{customdata[0].lat:.2f}</b>'+
-            '<extra></extra>'
-          };
+            ,hovertemplate: `<b>Altitude</b>: %{y}${slopeHover}<br /><b>lon</b> : %{customdata[0].lon:.2f} / <b>lat</b> : %{customdata[0].lat:.2f}<extra></extra>`
+        };
         var data = [profilLine];
 
         var plotLocale = lizMap.config.datavizLayers.locale.substr(0,2).toLowerCase();
@@ -207,7 +206,8 @@ function getProfil(p1,p2){
         $('#altiProfil .menu-content #profil-chart .spinner').hide();
         var myPlot = document.getElementById('profil-chart-container');
 
-        myPlot.on('plotly_click', function(data){
+        //Add a geo point on the map when hovering the chart
+        myPlot.on('plotly_hover', function(data){
             p = data.points[0].customdata[0];
             let layers = lizMap.mainLizmap.map.getAllLayers();
             // searching for altiProfil layer
@@ -228,6 +228,21 @@ function getProfil(p1,p2){
                 }
             });
         });
+
+        //Remove the point on the map when unhovering the chart
+        myPlot.on('plotly_unhover', function(data){
+            let layers = lizMap.mainLizmap.map.getAllLayers();
+            layers.forEach( function (layer) {
+                if (layer.get('altiprofil') == true) {
+                    let features = layer.getSource().getFeatures();
+                    if(features.length > 3){
+                        layer.getSource().removeFeature(features[features.length-1]);
+                    }
+                    
+                }
+            });
+        });
+
         document.getElementsByClassName('xtitle')[0].y.baseVal[0].value = document.getElementsByClassName('xtitle')[0].y.baseVal[0].value - 20;
         resizePlot('profil-chart-container')
     });
