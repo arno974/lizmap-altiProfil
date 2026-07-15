@@ -10,9 +10,7 @@
     var LOCALES_ALTI_ERROR_PROFIL = "{@altiProfil~altiProfil.alti.error.profil@}";
     var LOCALES_ALTI_ERROR_REQUEST = "{@altiProfil~altiProfil.alti.error.request@}";
     var LOCALES_ALTI_DPLUS = "{@altiProfil~altiProfil.alti.dplus@}";
-    var LOCALES_ALTI_DMINUS = "{@altiProfil~altiProfil.alti.dminus@}";
-
-    
+    var LOCALES_ALTI_DMINUS = "{@altiProfil~altiProfil.alti.dminus@}";   
     var ALTI_PROVIDER = "{$altiProvider}";
     var LOCALES_ALTI_UNIT_ABRV = '';
     
@@ -26,19 +24,31 @@
       {/if}     
     {/if}   
     var LOCALES_ALTI_MEAN = "{@altiProfil~altiProfil.alti.mean@}";  
-    var LOCALES_ALTI_DATASOURCE = "{@altiProfil~altiProfil.alti.datasource@}";  
-  
+    var LOCALES_ALTI_DATASOURCE = "{@altiProfil~altiProfil.alti.datasource@}";
 </script>
-<div id="altiProfil">
-  <div class="menu-content">
-    {@altiProfil~altiProfil.dock.help@} 
-    <p>
-      {@altiProfil~altiProfil.alti.point1@} : <span id="alt-p1"></span> <br/>
-      {@altiProfil~altiProfil.alti.point2@} : <span id="alt-p2"></span>
-    </p>
-    <div id="profil-chart">
-      <div class="spinner"></div>
-      <div id="profil-chart-container"></div>
-    </div>  
-  </div>
+
+
+<div id="altiProfil" class="altiProfil">
+    {if $dock == 'minidock'}
+      <h3>
+        <span class="title">
+          <button id="profil-stop" class="btn btn-mini btn-error btn-link" title="{@view~map.toolbar.content.stop@}">×</button>
+          <span class="icon"></span>
+          <span class="text">&nbsp;{@altiProfil~altiProfil.dock.title@}&nbsp;</span>
+        </span>
+      </h3>
+    {/if}
+
+    <div class="menu-content">
+      {@altiProfil~altiProfil.dock.help@} 
+      <p>
+        {@altiProfil~altiProfil.alti.point1@} : <span id="alt-p1"></span> <br/>
+        {@altiProfil~altiProfil.alti.point2@} : <span id="alt-p2"></span>
+      </p>
+      <div id="profil-chart">
+        <div class="spinner"></div>
+        <div id="profil-chart-container"></div>
+      </div>
+    </div>
+
 </div>

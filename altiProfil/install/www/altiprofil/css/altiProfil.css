@@ -7,30 +7,39 @@
   background-position: 0 0;
 }
 
-#dock-content .altiProfil h3 .icon{
-    background-image: url(../img/noun_altitude.png);
+:is(#mini-dock, #dock, #right-dock) .altiProfil h3 .icon{
+    background-image: url(../img/noun_altitude_click.png);
     background-position: 0 0;
+}
+
+#nav-tab-altiProfil a::before{
+  content: " ";
+  display: inline-block;
+  background-image: url(../img/noun_altitude_click.png);
+  background-repeat: no-repeat;
+  width: 20px;
+  height: 20px;
+  margin-right: 4px;
+  vertical-align: text-bottom;
 }
 
 #altiProfil {
     width: 500px;
     height: 100%;
     z-index: 100000;
-    background-color: #EFEFEF;
     color: #333;
     overflow: auto;
-    font-size: 0.85em;
-    padding: 5px;
     max-height: calc(100% - 10px);
     max-width: calc(100% - 10px);
 }
 
-#dock-content #altiProfil .menu-content #profil-chart .spinner{
+:is(#mini-dock, #dock, #right-dock) #altiProfil .menu-content #profil-chart .spinner{
     display: inline-block;
     width: 80px;
     height: 80px;
 }
-#dock-content #altiProfil .menu-content #profil-chart .spinner{
+
+:is(#mini-dock, #dock, #right-dock) #altiProfil .menu-content #profil-chart .spinner{
     content: " ";
     display: block;
     width: 34px;
