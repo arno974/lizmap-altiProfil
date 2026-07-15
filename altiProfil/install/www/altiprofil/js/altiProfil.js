@@ -1,12 +1,26 @@
 lizMap.events.on({
-    'uicreated': function(e) {
-        $('#profil-stop').click(function(){
-            $('#button-altiProfil').click();
-        });
-        $('#altiProfil .menu-content #profil-chart').hide();
+    'uicreated': function() {
+        const profilStop = document.getElementById('profil-stop');
+        if (profilStop) {
+            profilStop.addEventListener('click', function () {
+                const btn = document.getElementById('button-altiProfil');
+                if (btn) { btn.click(); }
+            });
+        }
+        hideElement('#altiProfil .menu-content #profil-chart');
         initAltiProfil();
     }
 });
+
+function showElement(selector) {
+    const el = document.querySelector(selector);
+    if (el) { el.style.display = ''; }
+}
+
+function hideElement(selector) {
+    const el = document.querySelector(selector);
+    if (el) { el.style.display = 'none'; }
+}
 
 function getAltiJsonResponse(params, aCallback){
     $.get(
@@ -121,6 +135,10 @@ function getProfil(p1,p2){
         let dPlus = 0, dMinus = 0, prevY = null;
         let iMin = -1, iMax = -1, vMin = Infinity, vMax = -Infinity;
         for (let k = 0; k < _y.length; k++) {
+            // Plotly's hovertemplate warns on null: show a dash instead
+            if (_customdata[k] && _customdata[k][0] && _customdata[k][0].slope == null) {
+                _customdata[k][0].slope = '-';
+            }
             if (_y[k] === null) { prevY = null; continue; }
             const v = Number(_y[k]);
             if (isNaN(v)) { prevY = null; continue; }
@@ -227,7 +245,7 @@ function getProfil(p1,p2){
             );
         }
 
-        const slopeHover = (ALTI_PROVIDER == "database") ? ` <b>Pente</b> : %{customdata[0].slope:.1f}${LOCALES_ALTI_UNIT_ABRV}`: '';
+        const slopeHover = (ALTI_PROVIDER == "database") ? ` <b>Pente</b> : %{customdata[0].slope}${LOCALES_ALTI_UNIT_ABRV}`: '';
          
         var profilLine = [{
                 // Invisible baseline at the lowest elevation: with a single trace,
@@ -352,7 +370,10 @@ function initAltiProfil() {
 
     function onAltiDockClosed() {
         // enable popup
-        lizMap.mainLizmap.popup.active = true;
+        if (lizMap?.mainLizmap?.popup) {
+              lizMap.mainLizmap.popup.active = true;
+        }
+
         $('#altiProfil .menu-content #profil-chart-container').empty();
         $('#altiProfil .menu-content span').html( "..." );
         altiProfilSource.clear();
@@ -434,6 +455,4 @@ function initAltiProfil() {
             }
         }
         );
-
-
 }
