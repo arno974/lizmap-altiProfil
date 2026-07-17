@@ -54,6 +54,7 @@ class altiProfilListener extends jEventListener{
         } else {
             $errorConfigMsg = jLocale::get('altiProfil~altiProfil.error.configMsg');
             jLog::log($errorConfigMsg);
+            
         }
     }
 
@@ -130,4 +131,3 @@ class altiProfilListener extends jEventListener{
         return $dv->getStatus();
     }
 }
-

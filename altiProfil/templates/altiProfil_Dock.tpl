@@ -39,16 +39,16 @@
       </h3>
     {/if}
 
-    <div class="menu-content">
-      {@altiProfil~altiProfil.dock.help@} 
-      <p>
+    <div class="menu-content">      
+      {@altiProfil~altiProfil.dock.help@}            
+      <p id="altiProfil-coords">
         {@altiProfil~altiProfil.alti.point1@} : <span id="alt-p1"></span> <br/>
         {@altiProfil~altiProfil.alti.point2@} : <span id="alt-p2"></span>
       </p>
-      <div id="profil-chart">
+      <div id="altiProfil-chart">
         <div class="spinner"></div>
-        <div id="profil-chart-container"></div>
+        <div id="altiProfil-chart-container"></div>
       </div>
+      <p><span id="altiProfil-error" style="color: red;"></span></p> 
     </div>
-
 </div>
