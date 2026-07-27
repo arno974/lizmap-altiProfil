@@ -1,31 +1,12 @@
 <?php
 
+use AltiProfil\Elevation\ProviderFactory;
+use AltiProfil\Elevation\ProfileParams;
+use AltiProfil\Elevation\InvalidRequestException;
+use AltiProfil\Elevation\ServiceException;
+
 class ajaxCtrl extends jController
 {
-    /**
-     * Log Error Message
-    **/
-    private function errorMsg($errorMsg){
-        $rep = $this->getResponse('json');
-        jLog::log("AltiProfil :: $errorMsg");
-        $rep->data = array('error msg' => $errorMsg);
-        return $rep;
-    }
-
-    /**
-     * Check input parameters
-    **/
-    protected function checkParams($lon, $lat){
-        if ( $this->request->isAjax() ){
-            if( is_numeric($lon) &&  is_numeric($lat) ){
-                return true;
-            } else{
-                jLog::log("AltiProfil :: Wrong lon/lat params");
-            }
-        }else{
-            jLog::log("AltiProfil :: No ajax request");
-        }
-    }
 
     /**
      * Check if a user has the right to access
@@ -44,6 +25,27 @@ class ajaxCtrl extends jController
     }
 
     /**
+     * 403 response with the standard error body.
+     */
+    private function accessDenied(){
+        $rep = $this->errorMsg('Access denied to this repository/project');
+        $rep->setHttpStatus(403, \Lizmap\Request\Proxy::getHttpStatusMsg(403));
+
+        return $rep;
+    }
+
+    /**
+     * JSON error response, exact same shape the front reads as data['error msg'].
+     */
+    private function errorMsg($errorMsg){
+        $rep = $this->getResponse('json');
+        jLog::log("AltiProfil :: $errorMsg");
+        $rep->data = array('error msg' => $errorMsg);
+
+        return $rep;
+    }
+
+    /**
      * Get alti from one point based on IGN or database
     **/
     public function getAlti(){
@@ -53,36 +55,25 @@ class ajaxCtrl extends jController
 
         //check first for access to the project, if not return 403
         if (!$this->checkProjectAccess($repository, $project)) {
-            $rep = $this->errorMsg("Access denied to this repository/project");
-            $rep->setHttpStatus(403, \Lizmap\Request\Proxy::getHttpStatusMsg(403));
-            return $rep;
+            return $this->accessDenied();
         }  
 
-        $altiConfig = new \AltiProfil\AltiConfig();
-        $altiProvider = $altiConfig->getProvider();
         $lon = $this->param('lon');
         $lat = $this->param('lat');
-        if ($this->checkParams($lon, $lat)){
-            if($altiProvider == 'ign' ){
-                $altiProviderInstance = new \AltiProfil\AltiServicesFromIGN($altiConfig);
-                $rep->data = $altiProviderInstance->getAlti($lon, $lat);
-                return $rep;
-            }elseif ( $altiProvider == 'database' ) {
-                $altiProviderInstance = new \AltiProfil\AltiServicesFromDB($altiConfig, $repository, $project);
-                $rep->data = $altiProviderInstance->getAlti($lon, $lat);
-                return $rep;
-            }
-            return $this->errorMsg("Wrong or No Alti Provider defined (config $altiProvider)");
+        if (!$this->request->isAjax() || !is_numeric($lon) || !is_numeric($lat)) {
+            return $this->errorMsg('No Ajax or Wrong lon/lat values');
         }
-        return $this->errorMsg("Wrong lon/lat values");
-    }
 
-    /**
-     * Check input parameters for profil
-    **/
-    protected function checkProfilParams($sampling, $distance){
-        return is_numeric($sampling) && $sampling > 0
-            && is_numeric($distance) && $distance >= 0;
+        try {
+            $config = new \AltiProfil\AltiConfig();   
+            $provider = ProviderFactory::create($config, $repository, $project);
+            $rep->data = $provider->getElevation($lon, $lat);
+        } catch (ServiceException $e) {
+            \jLog::log('AltiProfil :: '.$e->getMessage());
+
+            return $this->errorMsg($e->getMessage());
+        }
+        return $rep;
     }
 
     /**
@@ -95,38 +86,35 @@ class ajaxCtrl extends jController
 
         //check first for access to the project, if not return 403
         if (!$this->checkProjectAccess($repository, $project)) {
-            $rep = $this->errorMsg("Access denied to this repository/project");
-            $rep->setHttpStatus(403, \Lizmap\Request\Proxy::getHttpStatusMsg(403));
-            return $rep;
+            return $this->accessDenied();
         }
 
-        $altiConfig = new \AltiProfil\AltiConfig();
-        $altiProvider = $altiConfig->getProvider();
-
-        $p1Lon = $this->param('p1Lon');
-        $p1Lat = $this->param('p1Lat');
-        $p2Lon = $this->param('p2Lon');
-        $p2Lat = $this->param('p2Lat');
-        $sampling = $this->param('sampling');
-        $distance = $this->param('distance');
-
-        if ( ($this->checkParams($p1Lon, $p1Lat)) and ($this->checkParams($p2Lon, $p2Lat)) ){
-            if($altiProvider == 'ign' ){
-                if (!$this->checkProfilParams($sampling, $distance)) {
-                    return $this->errorMsg("Wrong sampling/distance values");
-                }
-                $altiProviderInstance = new \AltiProfil\AltiServicesFromIGN($altiConfig);
-                $rep->data = $altiProviderInstance->getProfil($p1Lon, $p1Lat, $p2Lon, $p2Lat, $sampling, $distance);
-                return $rep;
-            }elseif ( $altiProvider == 'database' ) {
-                
-                $altiProviderInstance = new \AltiProfil\AltiServicesFromDB($altiConfig, $repository, $project);
-                $rep->data = $altiProviderInstance->getProfil($p1Lon, $p1Lat, $p2Lon, $p2Lat);
-                return $rep;
-            }
-            return $this->errorMsg("Wrong or No Alti Provider defined (config $altiProvider)");
+        if (!$this->request->isAjax()) {
+            return $this->errorMsg('No ajax request');
         }
-        return $this->errorMsg("Wrong lon/lat values");
+
+        try {
+            $request = new ProfileParams(
+                $this->param('p1Lon'),
+                $this->param('p1Lat'),
+                $this->param('p2Lon'),
+                $this->param('p2Lat'),
+                $this->param('sampling'),
+                $this->param('distance')
+            );
+            $config = new \AltiProfil\AltiConfig();
+            $provider = ProviderFactory::create($config, $repository, $project);
+            $rep->data = $provider->getProfile($request);
+        } catch (InvalidRequestException $e) {
+            // Bad client input — no need to log noise.
+            return $this->errorMsg($e->getMessage());
+        } catch (ServiceException $e) {
+            \jLog::log('AltiProfil :: '.$e->getMessage());
+
+            return $this->errorMsg($e->getMessage());
+        }
+
+        return $rep;
     }
 }
 
