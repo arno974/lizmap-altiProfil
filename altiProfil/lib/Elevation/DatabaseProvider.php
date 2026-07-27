@@ -1,47 +1,42 @@
 <?php
-namespace AltiProfil;
 
-Class AltiServicesFromDB {
+namespace AltiProfil\Elevation;
 
-    protected $Srid = "";
-    protected $Altisource = "";
-    protected $AltiResolution = "";
-    protected $profilUnit = "";
-    protected $repository = Null;
-    protected $project = Null;
+/**
+ * Elevation from the DB
+ */
+class DatabaseProvider implements ProviderInterface
+{
+    /** jDb connection profile name. */
+    const CONNECTION = 'altiProfil';
 
-    /**
-     * @var \AltiProfil\AltiConfig
-     */
+    /** Max samples per profile: a ~1000px chart cannot show more. */
+    const SAMPLE_BUDGET = 1500;
+
+    /** Hard safety cap regardless of the budget above. */
+    const SAMPLE_HARD_CAP = 10000;
+
+    /** @var \AltiProfil\AltiConfig */
     protected $config;
 
-    function __construct(\AltiProfil\AltiConfig $altiConfig, $repository, $project)
-    {
-        $this->config = $altiConfig;
-        $this->Srid = $altiConfig->getSrid();
-        $this->Altisource = $altiConfig->getAltisource();
-        $this->profilUnit = $altiConfig->getProfilUnit();
-        $this->AltiResolution = $altiConfig->getAltiResolution();
+    /** @var string */
+    private $repository;
 
-        // Get project config: override table and source per project
+    /** @var string */
+    private $project;
+
+    public function __construct(\AltiProfil\AltiConfig $config, $repository, $project)
+    {
+        $this->config = $config;
         $this->repository = $repository;
         $this->project = $project;
+
+        // Apply per-project .alti overrides (table, source, srid…) before querying.
         $this->config->setProjectConfig($repository, $project);
     }
 
-    /**
-     * Get alti from one point based on database
-    **/
-    public function getAlti($lon, $lat){
-        $queryalti = $this->queryAlti($lon, $lat);
-        return $queryalti;
-    }
-
-    /**
-     * Alti SQL Query
-    **/
-    private function queryAlti($lon, $lat) {
-
+    public function getElevation($lon, $lat)
+    {
         /**
            * Point elevation query.
            *
@@ -67,11 +62,11 @@ Class AltiServicesFromDB {
            *   tiles and some return NULL: this ordering picks the tile that
            *   actually holds the value.
         **/
-        $sql = sprintf('
-            WITH pt AS (
+        $sql = sprintf(
+            'WITH pt AS (
                 SELECT ST_Transform(ST_SetSRID(ST_MakePoint(%2$.8f, %3$.8f), 4326), %4$s) AS geom
             )
-            SELECT ROUND(ST_Value(r.rast, 1, pt.geom, true, \'bilinear\')::numeric,2)::float8 AS z
+            SELECT ROUND(ST_Value(r.rast, 1, pt.geom, true, \'bilinear\')::numeric, 2)::float8 AS z
             FROM %1$s r, pt
             WHERE ST_ConvexHull(r.rast) && pt.geom
             ORDER BY ST_Value(r.rast, 1, pt.geom) IS NOT NULL DESC
@@ -79,27 +74,24 @@ Class AltiServicesFromDB {
             $this->config->quotedSchemaTableName(),
             $lon,
             $lat,
-            $this->Srid
+            $this->config->getSrid()
         );
 
-        $cnx = \jDb::getConnection( 'altiProfil' );
-        $qResult = $cnx->query( $sql );
-        $result = array("elevations"=>[$qResult->fetch(\PDO::FETCH_ASSOC)]);
-        return $result;
+        try {
+            $cnx = \jDb::getConnection(self::CONNECTION);
+            $row = $cnx->query($sql)->fetch();
+        } catch (\Exception $e) {
+            throw new ServiceException('Database elevation query failed: '.$e->getMessage());
+        }
+
+        $z = ($row !== false && isset($row->z)) ? $row->z : null;
+
+        return array('elevations' => array(array('z' => $z)));
     }
 
-    /**
-     * Get alti from database based on one point
-    **/
-    public function getProfil($p1Lon, $p1Lat, $p2Lon, $p2Lat){
-        $getProfil =$this->queryProfil($p1Lon, $p1Lat, $p2Lon, $p2Lat);
-        return $getProfil;
-    }
-
-    /**
-     * SQL Query Profil from database
-    **/
-    protected function queryProfil($p1Lon, $p1Lat, $p2Lon, $p2Lat){
+    public function getProfile(ProfileParams $profilParams)
+    {
+        $resolution = number_format((float) $this->config->getAltiResolution(), 2, '.', '');
 
         /**
            * Elevation profile query. Pipeline:
@@ -138,34 +130,30 @@ Class AltiServicesFromDB {
            * 37s on 52km) and measured TERRAIN slope, while this measures the
            * slope ALONG the profile - assumed semantic change.
         **/
-        $sql = sprintf('
-            WITH
+        $sql = sprintf(
+            'WITH
                 line AS (
-                    -- From an arbitrary line
                     SELECT ST_MakeLine(
                                ST_Transform(ST_SetSRID(ST_MakePoint(%2$.8f, %3$.8f), 4326), %4$s),
                                ST_Transform(ST_SetSRID(ST_MakePoint(%5$.8f, %6$.8f), 4326), %4$s)
                            ) AS geom
                 ),
                 params AS (
-                    -- Step: config resolution, degraded to cap the profile at ~1500 samples
                     SELECT geom,
                            ST_Length(geom) AS len,
-                           GREATEST(%8$s, ST_Length(geom) / 1500.0) AS step
+                           GREATEST(%8$s, ST_Length(geom) / %9$d.0) AS step
                     FROM line
                     WHERE ST_Length(geom) > 0
                 ),
                 samples AS (
-                    -- Regular samples along the line, endpoint included, capped at 10000
                     SELECT i,
                            LEAST(i * step, len)                                      AS dist,
                            ST_LineInterpolatePoint(geom, LEAST(i * step / len, 1.0)) AS geom,
                            step
                     FROM params,
-                         generate_series(0, LEAST(CEIL(len / step)::int, 10000)) AS i
+                         generate_series(0, LEAST(CEIL(len / step)::int, %10$d)) AS i
                 ),
                 profile AS (
-                    -- Elevation per sample; LATERAL dedups tile-border matches
                     SELECT s.i,
                            s.dist,
                            v.z,
@@ -185,7 +173,7 @@ Class AltiServicesFromDB {
                    ROUND(z::numeric, 2)::float8    AS y,
                    lon,
                    lat,
-                   round(step::numeric,1) AS resolution,
+                   round(step::numeric, 1)         AS resolution,
                    ROUND((
                        CASE
                            WHEN dist - LAG(dist) OVER w > 0
@@ -201,49 +189,62 @@ Class AltiServicesFromDB {
             WINDOW w AS (ORDER BY i)
             ORDER BY i',
             $this->config->quotedSchemaTableName(),
-            $p1Lon, $p1Lat,
-            $this->Srid,
-            $p2Lon, $p2Lat,
-            $this->profilUnit,
-            number_format((float) $this->AltiResolution, 2, '.', '')
+            $profilParams->getP1Lon(), $profilParams->getP1Lat(),
+            $this->config->getSrid(),
+            $profilParams->getP2Lon(), $profilParams->getP2Lat(),
+            $this->config->getProfilUnit(),
+            $resolution,
+            self::SAMPLE_BUDGET,
+            self::SAMPLE_HARD_CAP
         );
 
-        $cnx = \jDb::getConnection('altiProfil');
-        $qResult = $cnx->query($sql);
+        try {
+            $cnx = \jDb::getConnection(self::CONNECTION);
+            $qResult = $cnx->query($sql);
+        } catch (\Exception $e) {
+            throw new ServiceException('Database profile query failed: '.$e->getMessage());
+        }
+
         $x = array();
         $y = array();
         $customdata = array();
-        $resolution = "";
         $slopes = array();
-        while($row=$qResult->fetch())  {
+        $resolutionUsed = '';
+        while ($row = $qResult->fetch()) {
             $x[] = $row->x;
             $y[] = $row->y;
-            $customdata[] = [["lon" => $row->lon, "lat" => $row->lat, "slope" => $row->slope]];
-            $resolution = $row->resolution;
-            if ($row->slope !== null) { $slopes[] = abs((float) $row->slope); }
+            $customdata[] = array(array(
+                'lon' => $row->lon,
+                'lat' => $row->lat,
+                'slope' => $row->slope,
+            ));
+            $resolutionUsed = $row->resolution;
+            if ($row->slope !== null) {
+                $slopes[] = abs((float) $row->slope);
+            }
         }
-        //Remove previous SQL function to calculate slope and replace it with a PHP calculation 
-        //=> Faster and in this version the slope has been added for each cooridnates inside the first SQL Query
+
+        // Slope stats derived from the per-sample values (see class doc: the
+        // former ST_Slope query did not scale). This is the slope ALONG the
+        // profile, not the 2D terrain gradient.
         $slope = false;
         if (count($slopes) > 0) {
             $slope = array(
-                "count"      => count($slopes),
-                "min_slope"  => round(min($slopes), 2),
-                "max_slope"  => round(max($slopes), 2),
-                "mean_slope" => round(array_sum($slopes) / count($slopes), 2),
+                'count'      => count($slopes),
+                'min_slope'  => round(min($slopes), 2),
+                'max_slope'  => round(max($slopes), 2),
+                'mean_slope' => round(array_sum($slopes) / count($slopes), 2),
             );
-        }        
+        }
 
-        $data = [ [
-            "x" => $x,
-            "y" => $y,
-            "customdata" => $customdata,
-            "srid" => $this->Srid,
-            "resolution" => $resolution,
-            "altisource" => $this->Altisource,
-            "slope" => $slope
-         ] ];
-
-        return $data;
+        return array(array(
+            'x' => $x,
+            'y' => $y,
+            'customdata' => $customdata,
+            'srid' => $this->config->getSrid(),
+            'resolution' => $resolutionUsed,
+            'altisource' => $this->config->getAltisource(),
+            'slope' => $slope,
+        ));
     }
 }

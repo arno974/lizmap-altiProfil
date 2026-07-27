@@ -187,16 +187,4 @@ class AltiConfig
         return false;
     }
 
-    /**
-     * @param string $path the path of the API
-     * @param array $parameters query parameters
-     * @return string the full url
-     */
-    public function getIgnServiceUrl($path, $parameters)
-    {
-        $url = $this->parameters['ignServiceUrl'];
-        $url .= $path;
-        $url .= '?'. http_build_query($parameters, '', '&');
-        return $url;
-    }
 }
