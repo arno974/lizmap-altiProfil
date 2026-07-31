@@ -29,7 +29,7 @@ class ProfileParams
         }
         // sampling/distance are only meaningful for the IGN provider, but they
         // are validated unconditionally: a single, provider-agnostic contract.
-        if (!is_numeric($sampling) || (float) $sampling <= 0) {
+        if (!is_numeric($sampling) ||  (int) $sampling < 1) {
             throw new InvalidRequestException('Wrong sampling value');
         }
         if (!is_numeric($distance) || (float) $distance < 0) {
