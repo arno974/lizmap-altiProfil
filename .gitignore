@@ -8,3 +8,9 @@
 
 # QGIS
 *_attachments.zip
+
+# Composer
+/vendor/
+
+# PHPUnit
+/.phpunit.result.cache
