@@ -7,6 +7,9 @@ namespace AltiProfil\Elevation;
  */
 class IgnProvider implements ProviderInterface
 {
+    /** IGN Géoplateforme altimetry REST base. */
+    const SERVICE_URL = 'https://data.geopf.fr/altimetrie/1.0/calcul/alti/rest';
+
     /** IGN resource id, https://data.geopf.fr/altimetrie/resources */
     const RESOURCE_ID = 'ign_rge_alti_wld';
 
@@ -23,7 +26,7 @@ class IgnProvider implements ProviderInterface
 
     public function getElevation($lon, $lat)
     {
-        $url = $this->buildUrl('/alti/rest/elevation.json', array(
+        $url = $this->buildUrl('/elevation.json', array(
             'lon' => $lon,
             'lat' => $lat,
             'resource' => self::RESOURCE_ID,
@@ -43,7 +46,7 @@ class IgnProvider implements ProviderInterface
     {
         $sampling = min(self::MAX_SAMPLING, $profilParams->getSampling());
 
-        $url = $this->buildUrl('/alti/rest/elevationLine.json', array(
+        $url = $this->buildUrl('/elevationLine.json', array(
             'lon' => $profilParams->getP1Lon().'|'.$profilParams->getP2Lon(),
             'lat' => $profilParams->getP1Lat().'|'.$profilParams->getP2Lat(),
             'sampling' => $sampling,
@@ -80,14 +83,11 @@ class IgnProvider implements ProviderInterface
     }
 
     /**
-     * Build a full IGN URL. Any URL is allowed (the base is validated as a URL
-     * in AltiConfig::isValidValue);
+     * Build a full IGN URL
      */
     private function buildUrl($path, array $parameters)
     {
-        $base = (string) $this->config->getValue('ignServiceUrl');
-
-        return $base.$path.'?'.http_build_query($parameters, '', '&');
+        return self::SERVICE_URL.$path.'?'.http_build_query($parameters, '', '&');
     }
 
     /**

@@ -50,10 +50,6 @@ class AltiConfigTest extends TestCase
             'schema vide'                  => ['altiProfileSchema',    '',                        false],
             'table propre'                 => ['altiProfileTable',     'reunion_mnt',             true],
 
-            // URL IGN : n'importe quelle URL valide est acceptée
-            'url valide'                   => ['ignServiceUrl',        'https://data.geopf.fr/x', true],
-            'url invalide'                 => ['ignServiceUrl',        'pas-une-url',             false],
-
             // altisource : chaîne SANS balise HTML (barrière anti-XSS)
             'altisource simple'            => ['altisource',           'GEOLAB',                  true],
             'altisource avec ©'            => ['altisource',           'Source © IGN',            true],
