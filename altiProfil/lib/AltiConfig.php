@@ -14,7 +14,6 @@ class AltiConfig
           'altiProfileSchema'   => '',
           'altiProfileTable'    => '',
           'altiProfileProvider' => 'ign',
-          'ignServiceUrl'       => 'https://data.geopf.fr/altimetrie/1.0/calcul',
           'dock'                => 'dock',
           'srid'                => '3857',
           'profilUnit'          => 'PERCENT',
@@ -62,9 +61,6 @@ class AltiConfig
 
             case 'dock':
                 return in_array($value, array('dock', 'minidock', 'rightdock'), true);
-
-            case 'ignServiceUrl':
-                 return filter_var((string) $value, FILTER_VALIDATE_URL) !== false;
                  
             case 'altisource':
                 return is_string($value) && $value === strip_tags($value);

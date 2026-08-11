@@ -106,7 +106,6 @@ altiresolution=DEM resolution
 
 ;if IGN French data provider
 ;altiProfileProvider= ign
-ignServiceUrl=https://wxs.ign.fr/
 ```
 
 You can specify your data source.
