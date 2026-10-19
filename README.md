@@ -4,10 +4,23 @@
 
 ## Description
 
-This Lizmap module allows you to create **topographic profile**, either from a raster table stored in **PostGIS** or an online
-API such as **French IGN** data provider.
+This Lizmap client module draws an **elevation profile** between two points clicked on the map. Elevations come either from a raster table stored in **PostGIS** (DEM) or from the "IGN" altimetry API.
 
 ![main interface](altiProfil.jpeg)
+
+### Features
+
+* Elevation of each clicked point.
+* Profile chart with a filled terrain area.
+* Highest and lowest points highlighted on the chart.
+* Cumulative elevation gain and loss (D+ / D-).
+* Hovering the chart shows the matching location on the map.
+* With the **database** provider only:
+  * slope along the profile, in percent or degrees, shown in the tooltip, with min / max / mean values;
+  * sampling resolution shown in the chart title;
+  * per-project override of the DEM table (see [Override the configuration for a single project](#override-the-configuration-for-a-single-project)).
+* Translations: English, French, German, Portuguese, Romanian.
+
 
 ## Installation
 
@@ -30,19 +43,12 @@ composer require --working-dir=lizmap/my-packages "arno974/lizmap-altiprofil"
 
 * Then go in `lizmap/install/` and execute some scripts :
 
-If you are using Lizmap Web Client 3.6 and higher, launch first :
-
 ```bash
-php configurator.php altiProfil
-php configurator.php altiProfilAdmin
-```
-
-* Then, **whatever** the version of Lizmap, launch installation scripts :
-
-```bash
-php installer.php
-./clean_vartmp.sh
-./set_rights.sh
+  php configurator.php altiProfil
+  php configurator.php altiProfilAdmin
+  php installer.php
+  ./clean_vartmp.sh
+  ./set_rights.sh
 ```
 
 Go to the configuration part.
@@ -50,13 +56,12 @@ Go to the configuration part.
 ### Manual installation
 
 * Download the ZIP from the [GitHub release page](https://github.com/arno974/lizmap-altiProfil/releases).
-* Extract the zip and copy directories `AltiProfil`, and `AltiProfilAdmin`
-  in folder `lizmap/lizmap-module/`
+* Extract the zip and copy directories `altiProfil` and `altiProfilAdmin`
+  in folder `lizmap/lizmap-modules/`
 * Modules need to be enabled in Lizmap by editing the configuration file `lizmap/var/config`.
 
 
-For Lizmap 3.4 or Lizmap 3.5, add in the file `lizmap/var/config/localconfig.ini.php`, in the `[module]` section,
-the reference to these 2 modules. Do not remove references to other modules in this section.
+Then run the same `configurator.php`, `installer.php`, `clean_vartmp.sh` and `set_rights.sh` commands as above, from the `lizmap/install/` directory.
 
 ```ini
 [modules]
@@ -83,7 +88,7 @@ lizmap/install/set_rights.sh
 
 ## Configuration
 
-It's necessary to go in the administration panel of Lizmap Web Client to set up the module.
+Open the Lizmap administration panel to set up the module.
 
 ![Administration panel](altiProfilAdmin.png)
 
@@ -97,30 +102,73 @@ altisource=Source of data
 altiProfileProvider=database
 altiProfileSchema=dem_schema
 altiProfileTable=dem_table
-srid=3957
+srid=3857
 ; profilUnit = PERCENT or DEGREES - unit for the profil
 profilUnit= PERCENT
 ; dock panel = dock or minidock or rightdock
 dock=dock
-altiresolution=DEM resolution
+altiresolution=10
 
 ;if IGN French data provider
 ;altiProfileProvider= ign
 ```
 
-You can specify your data source.
-Depending on your datasource, some extra configuration might be needed.
+| Key | Values | Default | Description |
+|-----|--------|---------|-------------|
+| `altiProfileProvider` | `ign`, `database` | `ign` | Elevation source. |
+| `altisource` | text | empty | Data source, displayed under the chart. HTML tags are not allowed. |
+| `profilUnit` | `PERCENT`, `DEGREES` | `PERCENT` | Slope unit (database provider only). |
+| `dock` | `dock`, `minidock`, `rightdock` | `dock` | Where the tool is displayed. |
+| `altiProfileSchema` | `[a-zA-Z0-9_]+` | empty | Schema of the raster table. |
+| `altiProfileTable` | `[a-zA-Z0-9_]+` | empty | Raster table. |
+| `srid` | integer | `3857` | SRID of the raster table. |
+| `altiresolution` | number > 0 | `25` | Sampling step of the profile, in raster units (usually the DEM resolution, in meters). |
 
-### Database
+### IGN French provider
+
+_French only 🇫🇷_
+
+```ini
+altiProfileProvider=ign
+```
+
+No API key is needed. The module calls the public IGN Géoplateforme service
+(`https://data.geopf.fr/altimetrie/1.0/calcul/alti/rest`) with the `ign_rge_alti_wld` resource.
+The URL is built into the module and cannot be changed.
+
+### Database provider
 
 ```ini
 altiProfileProvider=database
 ```
 
-### IGN French provider
+The database provider requires **PostGIS 3.2 or higher** with the raster extension activated (bilinear interpolation of `ST_Value`).
+
+#### Database connection
+
+Add a `jdb:altiProfil` profile in `lizmap/var/config/profiles.ini.php`:
 
 ```ini
-altiProfileProvider=ign
+[jdb:altiProfil]
+driver=pgsql
+database=name of the database
+host=localhost
+port=5432
+user=login
+password=password
+```
+
+#### Raster table
+
+The table must contain a raster column named `rast`, for instance loaded with `raster2pgsql`.
+Set `srid` to the SRID of this raster.
+
+A spatial index on the **convex hull** of the tiles is strongly recommended. The queries are written
+to use it, and without it every profile scans all the tiles:
+
+```sql
+CREATE INDEX ON dem_schema.dem_table USING gist (ST_ConvexHull(rast));
+ANALYZE dem_schema.dem_table;
 ```
 
 ## Override the configuration for a single project
@@ -128,7 +176,7 @@ altiProfileProvider=ign
 For every project published in Lizmap, for instance `my_project.qgs`, you can add a new file with extension `.alti` at the end of the file.
 In our example, it would be `my_project.qgs.alti`.
 
-This file allows you to override schema and table settings (when altiProfil is configued to use database as data source).
+This file allows you to override schema, table, srid, etc. settings (when altiProfil is configured to use database as data source).
 
 For instance
 
@@ -138,26 +186,18 @@ altiProfileSchema=srtm
 altiProfileTable=srtm_paris_high_resolution
 ```
 
-## Use-case from a database
+## Development
 
-To use this module with a database, you should connect to a raster table having a DEM.
-You need to add in the file `profiles.ini.php` (located in`lizmap/var/config`) the given block :
+### Unit tests
 
-```ini
-[jdb:altiProfil]
-driver=pgsql
-database=name of database
-host=localhost (or URL)
-user=the login for the database
-password=password for the database
-search_path=if the table is in a specific schema, otherwise, let "public"
+```bash
+composer install
+vendor/bin/phpunit
 ```
 
-## Cas de l'utilisation à partir de l'API IGN
+The tests cover `AltiConfig`, `ProfileParams` and `ProviderFactory`.
 
-_French only 🇫🇷_
+### Test stack
 
-En raison de l'absence de continuité de service de l'offre Pro IGN, il n'a pas été possible de tester complément l'intégration de l'API.
-Les tests effectués ont été réalisés sur la base des exemples donnés dans la documentation.
-
-Il est possible que l'intégration ne soit pas optimale, mais cela devrait tout de même être fonctionnel.
+The `tests/` directory contains a Docker Compose stack (Lizmap 3.9, QGIS Server, PostGIS) with a
+sample project and an extract of the RGE ALTI 5m DEM. See [tests/README.md](tests/README.md).
