@@ -16,6 +16,9 @@ class IgnProvider implements ProviderInterface
     /** IGN caps a "fast" elevationLine response at 150 samples. */
     const MAX_SAMPLING = 150;
 
+    /** Value returned by IGN where there is no data (sea, outside coverage). */
+    const NO_DATA = -99999;
+
     /** @var \AltiProfil\AltiConfig */
     protected $config;
 
@@ -39,7 +42,7 @@ class IgnProvider implements ProviderInterface
 
         // Normalized to the same shape as the database provider so the front
         // reads data['elevations'][0]['z'] regardless of the backend.
-        return array('elevations' => array(array('z' => $response->elevations[0]->z)));
+        return array('elevations' => array(array('z' => $this->elevationOrNull($response->elevations[0]->z))));
     }
 
     public function getProfile(ProfileParams $profilParams)
@@ -61,13 +64,14 @@ class IgnProvider implements ProviderInterface
         $x = array();
         $y = array();
         $customdata = array();
-        // Distance step derived from the actual sampling used (capped above),
-        // so the x axis matches the number of points IGN returned.
-        $step = $sampling > 0 ? ($profilParams->getDistance() / $sampling) : 0;
+        // Distance step derived from the number of points IGN actually returned:
+          // n points span n-1 intervals, so the last point lands on the distance.
+        $count = count($response->elevations);
+        $step = $count > 1 ? ($profilParams->getDistance() / ($count - 1)) : 0;
         $i = 0;
         foreach ($response->elevations as $point) {
             $x[] = $i * $step;
-            $y[] = $point->z;
+            $y[] = $this->elevationOrNull($point->z);
             $customdata[] = array(array('lon' => $point->lon, 'lat' => $point->lat));
             $i++;
         }
@@ -80,6 +84,14 @@ class IgnProvider implements ProviderInterface
             'altisource' => $this->config->getAltisource(),
             'source' => 'IGN',
         ));
+    }
+
+    /**
+     * IGN no-data value -> null.
+     */
+    private function elevationOrNull($z)
+    {
+        return ($z === null || (float) $z <= self::NO_DATA) ? null : $z;
     }
 
     /**
