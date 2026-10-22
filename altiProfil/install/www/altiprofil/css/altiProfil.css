@@ -24,33 +24,188 @@
 }
 
 #altiProfil {
+    --ap-ink: #2b3a45;
+    --ap-muted: #6b7c88;
+    --ap-line: #dde4e9;
+    --ap-accent: #43718c;
+    --ap-high: #b5532d;
+    --ap-error: #b42318;
+
     width: 500px;
     height: 100%;
     z-index: 100000;
-    color: #333;
+    color: var(--ap-ink);
     overflow: auto;
     max-height: calc(100% - 10px);
     max-width: calc(100% - 10px);
+    font-variant-numeric: tabular-nums;
 }
 
-:is(#mini-dock, #dock, #right-dock) #altiProfil .menu-content #profil-chart .spinner{
-    display: inline-block;
-    width: 80px;
-    height: 80px;
+/* Step-by-step help ("place A", "place B", "click again") */
+#altiProfil .ap-help {
+    margin: 2px 4px 8px;
+    color: var(--ap-muted);
 }
 
-:is(#mini-dock, #dock, #right-dock) #altiProfil .menu-content #profil-chart .spinner{
-    content: " ";
+/*
+ * Summary: A elevation - distance - B elevation, with the coordinates below.
+ * Aligned on the plot area like a ruler: the A pin tip sits above 0 km and the
+ * B pin tip above the end. The side margins follow layout.margin in
+ * altiProfil.js (l: 46, r: 10) minus half a pin (10px).
+ */
+#altiProfil .ap-ends {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    column-gap: 8px;
+    margin: 2px 0 6px 36px;
+}
+
+/* B column can be wider than its content (coordinates): keep the pin on the right edge */
+#altiProfil .ap-end--b {
+    justify-content: flex-end;
+}
+
+#altiProfil .ap-coord {
+    font-size: 10px;
+    color: var(--ap-muted);
+    white-space: nowrap;
+}
+
+#altiProfil .ap-coord--b {
+    text-align: right;
+}
+
+#altiProfil .ap-end {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 15px;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+/* Pin shaped like the map markers: round, with a point toward the bottom-left */
+#altiProfil .ap-pin {
+    display: inline-grid;
+    place-items: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 50% 50% 50% 0;
+    transform: rotate(-45deg);
+    background: var(--ap-accent);
+}
+
+/* The letter is turned back upright */
+#altiProfil .ap-pin b {
+    transform: rotate(45deg);
+    color: #fff;
+    font-size: 11px;
+    line-height: 1;
+}
+
+#altiProfil .ap-dist {
+    position: relative;
+    text-align: center;
+    font-size: 12px;
+    color: var(--ap-muted);
+}
+
+#altiProfil .ap-dist::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    border-top: 1px dashed #b8c4cc;
+}
+
+#altiProfil .ap-dist span:not(:empty) {
+    position: relative;
+    background: #fff;
+    padding: 0 6px;
+}
+
+/* Figures under the chart */
+#altiProfil .ap-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    margin: 4px 0 0;
+    border-top: 1px solid var(--ap-line);
+}
+
+#altiProfil .ap-stats > div {
+    padding: 6px 4px 2px;
+    min-width: 0;
+}
+
+#altiProfil .ap-stats > div + div {
+    border-left: 1px solid var(--ap-line);
+}
+
+#altiProfil .ap-stats dt {
+    font-weight: normal;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    color: var(--ap-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+#altiProfil .ap-stats dd {
+    margin: 1px 0 0;
+    font-size: 14px;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+#altiProfil .ap-stats .is-high dt::before,
+#altiProfil .ap-stats .is-low dt::before {
+    content: "\25CF\00A0";
+}
+
+#altiProfil .ap-stats .is-high dt::before {
+    color: var(--ap-high);
+}
+
+#altiProfil .ap-stats .is-low dt::before {
+    color: var(--ap-accent);
+}
+
+#altiProfil .ap-note {
+    margin: 4px 4px 0;
+    font-size: 10px;
+    color: var(--ap-muted);
+}
+
+#altiProfil .ap-note:empty {
+    display: none;
+}
+
+#altiProfil .ap-error {
+    margin: 6px 4px 0;
+    color: var(--ap-error);
+}
+
+#altiProfil .ap-error:empty {
+    display: none;
+}
+
+/* Loading spinner, shown while the profile is computed */
+#altiProfil #altiProfil-chart .spinner {
     display: block;
     width: 34px;
     height: 34px;
-    margin: 8px;
+    margin: 16px auto;
     border-radius: 50%;
-    border: 6px solid #fff;
-    border-color: #474747 transparent #474747 transparent;
+    border: 4px solid transparent;
+    border-color: var(--ap-accent) transparent var(--ap-accent) transparent;
     animation: lds-dual-ring 1.2s linear infinite;
-  }
-  @keyframes lds-dual-ring {
+}
+
+@keyframes lds-dual-ring {
     0% {
       transform: rotate(0deg);
     }
@@ -59,5 +214,8 @@
     }
 }
 
-
-
+@media (prefers-reduced-motion: reduce) {
+    #altiProfil #altiProfil-chart .spinner {
+        animation-duration: 4s;
+    }
+}
