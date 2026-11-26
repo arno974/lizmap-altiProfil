@@ -11,6 +11,8 @@
 
 class configCtrl extends jController {
 
+    private $config;
+
     // Configure access via jacl2 rights management
     public $pluginParams = array(
         'index' => array( 'jacl2.right'=>'lizmap.admin.access'),

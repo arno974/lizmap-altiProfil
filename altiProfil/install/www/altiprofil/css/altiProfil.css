@@ -2,7 +2,8 @@
   background-image: url(../img/noun_altitude.png);
 }
 
-#mapmenu li.altiProfil.active #button-altiProfil span.icon{
+#mapmenu li.altiProfil.active #button-altiProfil span.icon,
+#altiProfil .dock-title::before{
   background-image: url(../img/noun_altitude_click.png);
   background-position: 0 0;
 }
